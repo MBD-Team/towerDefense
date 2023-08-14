@@ -59,6 +59,7 @@ function renderMap() {
   enemy.className = 'enemy';
   gameField?.appendChild(enemy);
 }
+function enemyMove() {}
 
 function tileClick(IndexX: number, IndexY: number) {
   IndexX;
