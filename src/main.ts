@@ -6,21 +6,33 @@ type GameTile = {
   isEnemyPath: boolean;
   isEnemy: boolean;
 };
+const gameSize = 3;
+
+const playerBase = {
+  positionX: 0,
+  positionY: Math.floor(gameSize / 2),
+};
+
+const enemyBase = {
+  positionX: gameSize - 1,
+  positionY: Math.floor(gameSize / 2),
+};
 
 const gameMap: GameTile[][] = [];
 
-const gameSize = 3;
 //----------------------------
 createMap();
 setInterval(gameLoop, 1000 / 30);
 
 //------------------------
 function gameLoop() {
+  enemyMove();
   renderAll();
 }
 
 function renderAll() {
   renderMap();
+  renderEnemy();
 }
 
 function renderMap() {
@@ -55,11 +67,20 @@ function renderMap() {
       gameField?.appendChild(tile);
     }
   }
+}
+function renderEnemy() {
   const enemy = document.createElement('div');
   enemy.className = 'enemy';
-  gameField?.appendChild(enemy);
+  enemy?.setAttribute('style', 'top ${}');
 }
-function enemyMove() {}
+function enemyMove() {
+  let enemyPositionX = enemyBase.positionX;
+  let enemyPositionY = enemyBase.positionY;
+  let enemyTargetX = playerBase.positionX;
+  let enemyTargetY = playerBase.positionY;
+
+  //nothing
+}
 
 function tileClick(IndexX: number, IndexY: number) {
   IndexX;
@@ -82,5 +103,3 @@ function createMap() {
     gameMap.push(gameRow);
   }
 }
-
-function enemyMove() {}
