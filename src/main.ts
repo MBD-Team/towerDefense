@@ -40,7 +40,6 @@ function renderMap() {
         tile.setAttribute('isEnemy', 'Enemy');
         tile.innerHTML = '👾';
       }
-      gameField?.appendChild(tile);
     }
   }
 }
