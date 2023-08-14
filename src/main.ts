@@ -5,6 +5,11 @@ type GameTile = {
   isEnemyBase: boolean;
   isEnemyPath: boolean;
 };
+
+const path: {
+  positionX: number;
+  positionY: number;
+}[] = [];
 //------------------------------
 const gameSize = 3;
 
