@@ -6,19 +6,32 @@ type GameTile = {
   isEnemyPath: boolean;
   isEnemy: boolean;
 };
+const gameSize = 3;
+
+const playerBase = {
+  positionX: 0,
+  positionY: Math.floor(gameSize / 2),
+};
+
+const enemyBase = {
+  positionX: gameSize - 1,
+  positionY: Math.floor(gameSize / 2),
+};
 
 const gameMap: GameTile[][] = [];
 
-const gameSize = 3;
 //----------------------------
 createMap();
 setInterval(gameLoop, 1000 / 30);
 
 //------------------------
-function gameLoop() {}
-renderAll();
+function gameLoop() {
+  enemyMove();
+  renderAll();
+}
 
 function renderAll() {
+  renderEnemy();
   renderMap();
 }
 
@@ -51,13 +64,40 @@ function renderMap() {
     }
   }
 }
-function enemyMove() {}
+function renderEnemy() {
+  const enemy = document.createElement('div');
+  enemy.className = 'enemy';
+  enemy.setAttribute('style', `top${0}px`);
+}
+
+function enemyMove() {
+  let enemyPositionX = enemyBase.positionX;
+  let enemyPositionY = enemyBase.positionY;
+  let enemyTargetX = playerBase.positionX;
+  let enemyTargetY = playerBase.positionY;
+
+  //nothing
+}
 
 function tileClick(IndexX: number, IndexY: number) {
   gameMap[IndexX][IndexY].isPlayerTower = !gameMap[IndexX][IndexY].isPlayerTower;
   renderMap();
 }
 
+function renderEnemy() {
+  const enemy = document.createElement('div');
+  enemy.className = 'enemy';
+  enemy.setAttribute('style', `top${0}px`);
+}
+
+function enemyMove() {
+  let enemyPositionX = enemyBase.positionX;
+  let enemyPositionY = enemyBase.positionY;
+  let enemyTargetX = playerBase.positionX;
+  let enemyTargetY = playerBase.positionY;
+
+  //nothing
+}
 function createMap() {
   for (let x = 0; x < gameSize; x++) {
     const gameRow: GameTile[] = [];
