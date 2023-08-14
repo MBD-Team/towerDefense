@@ -31,8 +31,8 @@ function gameLoop() {
 }
 
 function renderAll() {
-  renderMap();
   renderEnemy();
+  renderMap();
 }
 
 function renderMap() {
@@ -71,7 +71,7 @@ function renderMap() {
 function renderEnemy() {
   const enemy = document.createElement('div');
   enemy.className = 'enemy';
-  enemy.setAttribute('style', `top${1}px`);
+  enemy.setAttribute('style', `top${0}px`);
 }
 
 function enemyMove() {
