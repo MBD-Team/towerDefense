@@ -13,13 +13,13 @@ const playerBase = {
 };
 
 const enemyBase = {
-  positionX: gameSize - 1,
-  positionY: Math.floor(gameSize / 2),
+  positionX: 50,
+  positionY: 100,
 };
 
 const enemy = {
   posX: enemyBase.positionX,
-  poY: enemyBase.positionY,
+  posY: enemyBase.positionY,
   health: 1,
   money: 1,
 };
@@ -28,7 +28,8 @@ const gameMap: GameTile[][] = [];
 
 //----------------------------
 createMap();
-setInterval(gameLoop, 1000 / 30);
+renderMap();
+setInterval(gameLoop, 1000 / 12);
 
 //------------------------
 function gameLoop() {
@@ -38,7 +39,6 @@ function gameLoop() {
 
 function renderAll() {
   renderEnemy();
-  renderMap();
 }
 
 function renderMap() {
@@ -63,40 +63,23 @@ function renderMap() {
       if (gameMap[x][y].isEnemyBase) {
         tile.innerHTML = '🛸';
       }
-<<<<<<< HEAD
-      if (gameMap[x][y].isEnemy) {
-        tile.innerHTML = '👾';
-      }
-=======
->>>>>>> 16e7050db26639f180d966aaa1f3b4ee887bb6e1
       gameField?.appendChild(tile);
     }
   }
 }
 function renderEnemy() {
+  const deleteEnemy = document.querySelector('.enemy');
+  deleteEnemy?.remove();
   const enemyDiv = document.createElement('div');
   enemyDiv.className = 'enemy';
-  enemyDiv.setAttribute('style', `top${0}px`);
-}
-
-function enemyMove() {
-  let enemyPositionX = enemyBase.positionX;
-  let enemyPositionY = enemyBase.positionY;
-  let enemyTargetX = playerBase.positionX;
-  let enemyTargetY = playerBase.positionY;
-
-  //nothing
+  enemyDiv.setAttribute('style', `top:${enemy.posY}px; left:${enemy.posX}px`);
+  const gameField = document.querySelector('.field');
+  gameField?.appendChild(enemyDiv);
 }
 
 function tileClick(IndexX: number, IndexY: number) {
   gameMap[IndexX][IndexY].isPlayerTower = !gameMap[IndexX][IndexY].isPlayerTower;
   renderMap();
-}
-
-function renderEnemy() {
-  const enemy = document.createElement('div');
-  enemy.className = 'enemy';
-  enemy.setAttribute('style', `top${0}px`);
 }
 
 function enemyMove() {

@@ -12,6 +12,7 @@ h1{
   margin-bottom: 0;
 }
 .field{
+  position: relative;
   display: grid;
   width: 300px;
 }
