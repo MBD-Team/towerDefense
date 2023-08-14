@@ -48,3 +48,20 @@ function tileClick(IndexX: number, IndexY: number) {
   IndexX;
   IndexY;
 }
+
+function createMap() {
+  for (let x = 0; x < gameMap.length; x++) {
+    const gameRow = [];
+    for (let y = 0; y < gameMap.length; y++) {
+      const tile = {
+        isPlayerTower: false,
+        playerBase: false,
+        enemyStart: false,
+        enemyPath: false,
+        isEnemy: false,
+      };
+      gameRow.push(tile);
+    }
+    gameMap.push(gameRow);
+  }
+}
