@@ -10,7 +10,11 @@ type GameMap = {
 const gameMap: GameMap = [];
 
 const gameSize = 3;
+//----------------------------
+createMap();
 
+renderMap();
+//------------------------
 function renderMap() {
   const gameField = document.querySelector('.field');
   if (gameField !== null) {
