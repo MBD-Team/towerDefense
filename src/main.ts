@@ -2,7 +2,7 @@ import './style.css';
 type GameMap = {
   isPlayerTower: boolean;
   isPlayerBase: boolean;
-  isEnemyStart: boolean;
+  isEnemyBase: boolean;
   isEnemyPath: boolean;
   isEnemy: boolean;
 }[][];
@@ -29,9 +29,18 @@ function renderMap() {
         tile.innerHTML = '🔫';
       }
       if (gameMap[x][y].isPlayerBase) {
-        tile.setAttribute('isPlayerTower', 'PlayerTower');
-        tile.innerHTML = '';
+        tile.setAttribute('isPlayerBase', 'PlayerBase');
+        tile.innerHTML = '💻';
       }
+      if (gameMap[x][y].isEnemyBase) {
+        tile.setAttribute('isEnemyBase', 'EnemyBase');
+        tile.innerHTML = '🛸';
+      }
+      if (gameMap[x][y].isEnemy) {
+        tile.setAttribute('isEnemy', 'Enemy');
+        tile.innerHTML = '👾';
+      }
+      gameField?.appendChild(tile);
     }
   }
 }
