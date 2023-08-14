@@ -15,9 +15,8 @@ createMap();
 setInterval(gameLoop, 1000 / 30);
 
 //------------------------
-function gameLoop() {
-  renderAll();
-}
+function gameLoop() {}
+renderAll();
 
 function renderAll() {
   renderMap();
@@ -37,33 +36,26 @@ function renderMap() {
         tileClick(x, y);
       };
       if (gameMap[x][y].isPlayerTower) {
-        tile.className = 'isPlayerTower';
         tile.innerHTML = '🔫';
       }
       if (gameMap[x][y].isPlayerBase) {
-        tile.className = 'isPlayerBase';
         tile.innerHTML = '💻';
       }
       if (gameMap[x][y].isEnemyBase) {
-        tile.className = 'isEnemyBase';
         tile.innerHTML = '🛸';
       }
       if (gameMap[x][y].isEnemy) {
-        tile.className = 'isEnemy';
         tile.innerHTML = '👾';
       }
       gameField?.appendChild(tile);
     }
   }
-  const enemy = document.createElement('div');
-  enemy.className = 'enemy';
-  gameField?.appendChild(enemy);
 }
 function enemyMove() {}
 
 function tileClick(IndexX: number, IndexY: number) {
-  IndexX;
-  IndexY;
+  gameMap[IndexX][IndexY].isPlayerTower = !gameMap[IndexX][IndexY].isPlayerTower;
+  renderMap();
 }
 
 function createMap() {
@@ -82,5 +74,3 @@ function createMap() {
     gameMap.push(gameRow);
   }
 }
-
-function enemyMove() {}
