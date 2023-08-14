@@ -29,8 +29,13 @@ h1{
 
 .enemy{
   position: absolute;
-  background-color: blue;
+  background-color: crimson;
+  border: 1px solid black;
   width: 20px;
   height: 20px;
   transform: translate(-50%,-50%);
+}
+
+.path{
+  background-color: blueviolet;
 }

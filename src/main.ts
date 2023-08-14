@@ -73,8 +73,8 @@ function renderMap() {
     gameField.innerHTML = '';
   }
   gameField?.setAttribute('style', `grid-template-columns: repeat(${gameSize},1fr); width: ${50 * gameSize}px;`);
-  for (let x = 0; x < gameSize; x++) {
-    for (let y = 0; y < gameSize; y++) {
+  for (let y = 0; y < gameSize; y++) {
+    for (let x = 0; x < gameSize; x++) {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.onclick = () => {
@@ -88,6 +88,9 @@ function renderMap() {
       }
       if (gameMap[x][y].isEnemyBase) {
         tile.innerHTML = '🛸';
+      }
+      if (path.find(a => a.positionX === x && a.positionY === y)) {
+        tile.classList.add('path');
       }
       gameField?.appendChild(tile);
     }
@@ -139,10 +142,7 @@ function createMap() {
 }
 
 function createPath() {
-  for (let x = 0; x < gameSize; x++) {
-    for (let y = 0; y < gameSize; y++) {
-      gameMap[enemyBase.positionY][y].isEnemyPath = true;
-      console.log(gameMap[x][y].isEnemyPath);
-    }
-  }
+  path.push({ positionX: 1, positionY: 2 });
+  path.push({ positionX: 1, positionY: 1 });
+  path.push({ positionX: 1, positionY: 0 });
 }
