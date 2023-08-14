@@ -17,6 +17,13 @@ const enemyBase = {
   positionY: Math.floor(gameSize / 2),
 };
 
+const enemy = {
+  posX: enemyBase.positionX,
+  poY: enemyBase.positionY,
+  health: 1,
+  money: 1,
+};
+
 const gameMap: GameTile[][] = [];
 
 //----------------------------
@@ -64,9 +71,9 @@ function renderMap() {
   }
 }
 function renderEnemy() {
-  const enemy = document.createElement('div');
-  enemy.className = 'enemy';
-  enemy.setAttribute('style', `top${0}px`);
+  const enemyDiv = document.createElement('div');
+  enemyDiv.className = 'enemy';
+  enemyDiv.setAttribute('style', `top${0}px`);
 }
 
 function enemyMove() {
