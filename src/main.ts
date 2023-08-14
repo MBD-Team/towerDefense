@@ -7,19 +7,21 @@ type GameTile = {
 };
 const gameSize = 3;
 
-const playerBase = {
-  positionX: 0,
-  positionY: Math.floor(gameSize / 2),
+const player = {
+  positionX: Math.floor(gameSize / 2),
+  positionY: 0,
+  health: 20,
+  money: 100,
 };
 
 const enemyBase = {
-  positionX: 50,
-  positionY: 100,
+  positionY: gameSize - 1,
+  positionX: Math.floor(gameSize / 2),
 };
 
 const enemy = {
-  posX: enemyBase.positionX,
-  posY: enemyBase.positionY,
+  posX: indexToPixel(enemyBase.positionX),
+  posY: indexToPixel(enemyBase.positionY),
   health: 1,
   money: 1,
 };
@@ -27,18 +29,35 @@ const enemy = {
 const gameMap: GameTile[][] = [];
 
 //----------------------------
+console.log(player.health);
 createMap();
 renderMap();
-setInterval(gameLoop, 1000 / 12);
+const interval = setInterval(gameLoop, 1000 / 24);
 
 //------------------------
 function gameLoop() {
+  CheckWinLose();
   enemyMove();
   renderAll();
 }
 
 function renderAll() {
+  renderPlayerStats();
   renderEnemy();
+}
+function renderPlayerStats() {
+  const health = document.querySelector('.health') as HTMLDivElement;
+  health.innerText = `Player Health = ${player.health}`;
+}
+
+function CheckWinLose() {
+  if (player.health <= 0) {
+    clearInterval(interval);
+  }
+}
+
+function playerDamage(Damage) {
+  player.health = player.health - Damage;
 }
 
 function renderMap() {
@@ -81,14 +100,20 @@ function tileClick(IndexX: number, IndexY: number) {
   gameMap[IndexX][IndexY].isPlayerTower = !gameMap[IndexX][IndexY].isPlayerTower;
   renderMap();
 }
+function indexToPixel(index: number) {
+  return index * 50 + 25;
+}
 
 function enemyMove() {
-  let enemyPositionX = enemyBase.positionX;
-  let enemyPositionY = enemyBase.positionY;
-  let enemyTargetX = playerBase.positionX;
-  let enemyTargetY = playerBase.positionY;
-
-  //nothing
+  if (!(enemy.posY < indexToPixel(player.positionY))) {
+    enemy.posY -= 1;
+  }
+  if (enemy.posY === indexToPixel(player.positionY)) {
+    enemy.posY = indexToPixel(enemyBase.positionY);
+    renderEnemy();
+    playerDamage(1);
+    renderPlayerStats();
+  }
 }
 function createMap() {
   for (let x = 0; x < gameSize; x++) {
