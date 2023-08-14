@@ -9,6 +9,7 @@
     "plugin:@typescript-eslint/strict-type-checked" // same here without type-checked
   ],
   "rules": {
+    "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "no-constant-binary-expression": "error",
     "no-duplicate-imports": "error",

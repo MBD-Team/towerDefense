@@ -1,13 +1,13 @@
 import './style.css';
-type GameMap = {
+type GameTile = {
   isPlayerTower: boolean;
   isPlayerBase: boolean;
   isEnemyBase: boolean;
   isEnemyPath: boolean;
   isEnemy: boolean;
-}[][];
+};
 
-const gameMap: GameMap = [];
+const gameMap: GameTile[][] = [];
 
 const gameSize = 3;
 
@@ -51,14 +51,14 @@ function tileClick(IndexX: number, IndexY: number) {
 }
 
 function createMap() {
-  for (let x = 0; x < gameMap.length; x++) {
-    const gameRow = [];
-    for (let y = 0; y < gameMap.length; y++) {
-      const tile = {
+  for (let x = 0; x < gameSize; x++) {
+    const gameRow: GameTile[] = [];
+    for (let y = 0; y < gameSize; y++) {
+      const tile: GameTile = {
         isPlayerTower: false,
-        playerBase: false,
-        enemyStart: false,
-        enemyPath: false,
+        isPlayerBase: false,
+        isEnemyBase: false,
+        isEnemyPath: false,
         isEnemy: false,
       };
       gameRow.push(tile);
