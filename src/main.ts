@@ -71,8 +71,9 @@ function renderMap() {
 function renderEnemy() {
   const enemy = document.createElement('div');
   enemy.className = 'enemy';
-  enemy?.setAttribute('style', 'top ${}');
+  enemy.setAttribute('style', `top${1}px`);
 }
+
 function enemyMove() {
   let enemyPositionX = enemyBase.positionX;
   let enemyPositionY = enemyBase.positionY;
