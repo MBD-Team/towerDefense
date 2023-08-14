@@ -5,6 +5,7 @@ type GameTile = {
   isEnemyBase: boolean;
   isEnemyPath: boolean;
 };
+//------------------------------
 const gameSize = 3;
 
 const player = {
@@ -31,6 +32,7 @@ const gameMap: GameTile[][] = [];
 //----------------------------
 console.log(player.health);
 createMap();
+createPath();
 renderMap();
 const interval = setInterval(gameLoop, 1000 / 24);
 
@@ -56,8 +58,8 @@ function CheckWinLose() {
   }
 }
 
-function playerDamage(Damage) {
-  player.health = player.health - Damage;
+function playerDamage(Damage: number) {
+  player.health -= Damage;
 }
 
 function renderMap() {
@@ -128,5 +130,14 @@ function createMap() {
       gameRow.push(tile);
     }
     gameMap.push(gameRow);
+  }
+}
+
+function createPath() {
+  for (let x = 0; x < gameSize; x++) {
+    for (let y = 0; y < gameSize; y++) {
+      gameMap[enemyBase.positionY][y].isEnemyPath = true;
+      console.log(gameMap[x][y].isEnemyPath);
+    }
   }
 }
