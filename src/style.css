@@ -4,7 +4,23 @@ body {
   align-items: center;
 }
 
-div{
+.field{
+  display: grid;
+  position: relative;
+}
+
+.tile{
+  border: 1px solid black;
+  box-sizing: border-box;
   width: 50px;
   height: 50px;
+}
+
+.enemy{
+  position: absolute;
+  background-color: blue;
+  width: 50px;
+  height: 50px;
+  left: 33%;
+  top: 33%;
 }
