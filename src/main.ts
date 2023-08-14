@@ -4,7 +4,6 @@ type GameTile = {
   isPlayerBase: boolean;
   isEnemyBase: boolean;
   isEnemyPath: boolean;
-  isEnemy: boolean;
 };
 const gameSize = 3;
 
@@ -60,10 +59,6 @@ function renderMap() {
         tile.className = 'isEnemyBase';
         tile.innerHTML = '🛸';
       }
-      if (gameMap[x][y].isEnemy) {
-        tile.className = 'isEnemy';
-        tile.innerHTML = '👾';
-      }
       gameField?.appendChild(tile);
     }
   }
@@ -97,7 +92,6 @@ function createMap() {
         isPlayerBase: false,
         isEnemyBase: false,
         isEnemyPath: false,
-        isEnemy: false,
       };
       gameRow.push(tile);
     }
