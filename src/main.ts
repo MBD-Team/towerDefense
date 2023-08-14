@@ -12,40 +12,52 @@ const gameMap: GameTile[][] = [];
 const gameSize = 3;
 //----------------------------
 createMap();
+setInterval(gameLoop, 1000 / 30);
 
-renderMap();
 //------------------------
+function gameLoop() {
+  renderAll();
+}
+
+function renderAll() {
+  renderMap();
+}
+
 function renderMap() {
   const gameField = document.querySelector('.field');
   if (gameField !== null) {
     gameField.innerHTML = '';
   }
   gameField?.setAttribute('style', `grid-template-columns: repeat(${gameSize},1fr); width: ${50 * gameSize}px;`);
-  for (let x = 0; x !== gameSize; x++) {
-    for (let y = 0; y !== gameSize; y++) {
+  for (let x = 0; x < gameSize; x++) {
+    for (let y = 0; y < gameSize; y++) {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.onclick = () => {
         tileClick(x, y);
       };
       if (gameMap[x][y].isPlayerTower) {
-        tile.setAttribute('isPlayerTower', 'PlayerTower');
+        tile.className = 'isPlayerTower';
         tile.innerHTML = '🔫';
       }
       if (gameMap[x][y].isPlayerBase) {
-        tile.setAttribute('isPlayerBase', 'PlayerBase');
+        tile.className = 'isPlayerBase';
         tile.innerHTML = '💻';
       }
       if (gameMap[x][y].isEnemyBase) {
-        tile.setAttribute('isEnemyBase', 'EnemyBase');
+        tile.className = 'isEnemyBase';
         tile.innerHTML = '🛸';
       }
       if (gameMap[x][y].isEnemy) {
-        tile.setAttribute('isEnemy', 'Enemy');
+        tile.className = 'isEnemy';
         tile.innerHTML = '👾';
       }
+      gameField?.appendChild(tile);
     }
   }
+  const enemy = document.createElement('div');
+  enemy.className = 'enemy';
+  gameField?.appendChild(enemy);
 }
 
 function tileClick(IndexX: number, IndexY: number) {
@@ -69,3 +81,5 @@ function createMap() {
     gameMap.push(gameRow);
   }
 }
+
+function enemyMove() {}
