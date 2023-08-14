@@ -10,7 +10,11 @@ type GameTile = {
 const gameMap: GameTile[][] = [];
 
 const gameSize = 3;
+//----------------------------
+createMap();
 
+renderMap();
+//------------------------
 function renderMap() {
   const gameField = document.querySelector('.field');
   if (gameField !== null) {
@@ -40,7 +44,6 @@ function renderMap() {
         tile.setAttribute('isEnemy', 'Enemy');
         tile.innerHTML = '👾';
       }
-      gameField?.appendChild(tile);
     }
   }
 }
