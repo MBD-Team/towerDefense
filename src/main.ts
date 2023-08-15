@@ -2,8 +2,6 @@ import './style.css';
 
 type GameTile = {
   isPlayerTower: number | null;
-  isPlayerBase: boolean;
-  isEnemyBase: boolean;
   isEmpty: boolean;
 };
 
@@ -124,10 +122,10 @@ function renderMap() {
       if (gameMap[x][y].isPlayerTower) {
         tile.classList.add('tower');
       }
-      if (gameMap[x][y].isPlayerBase) {
+      if (path.at(-1)?.positionX === x && path.at(-1)?.positionY === y) {
         tile.classList.add('playerBase');
       }
-      if (gameMap[x][y].isEnemyBase) {
+      if (path[0].positionX === x && path[0].positionY === y) {
         tile.classList.add('enemyBase');
       }
       if (path.find(a => a.positionX === x && a.positionY === y)) {
@@ -196,8 +194,6 @@ function createMap() {
     for (let y = 0; y < gameSizeY; y++) {
       const tile: GameTile = {
         isPlayerTower: null,
-        isPlayerBase: false,
-        isEnemyBase: false,
         isEmpty: true,
       };
       gameRow.push(tile);
@@ -255,7 +251,6 @@ declare global {
 window.game = game;
 
 function createPath() {
-  gameMap[enemyBase.positionX][enemyBase.positionY].isEnemyBase = true;
   let pathY = gameSizeY - 1;
   let pathX = Math.floor(gameSizeX / 2);
   gameMap[pathX][pathY].isEmpty = false;
@@ -301,8 +296,6 @@ function createPath() {
   if (path.length < 60) {
     path.splice(0);
     createPath();
-  } else {
-    gameMap[pathX][pathY].isPlayerBase = true;
   }
 }
 
