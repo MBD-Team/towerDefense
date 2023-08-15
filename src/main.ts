@@ -105,7 +105,7 @@ function renderMap() {
         tileClick(x, y);
       };
       if (gameMap[x][y].isPlayerTower) {
-        tile.innerHTML = '🔫';
+        tile.classList.add('tower');
       }
       if (gameMap[x][y].isPlayerBase) {
         tile.innerHTML = '💻';
