@@ -33,7 +33,7 @@ export const player = {
   positionX: Math.floor(gameSize / 2),
   positionY: 0,
   health: 20,
-  money: 100,
+  money: 1000,
 };
 const TURRETS = {
   1: {
@@ -75,10 +75,11 @@ function gameLoop() {
   if (gameTicks % 24 === 0) {
     towerAttack();
   }
-  if (gameTicks % 24 === 0) {
+
+  if (gameTicks % 12 === 0) {
     spawnEnemy();
   }
-  enemyDeath();
+
   CheckWinLose();
   enemyMove();
   renderAll();
@@ -121,7 +122,7 @@ function renderMap() {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.onclick = () => {
-        tileClick(x, y);
+        openOptionsMenu(x, y);
       };
       if (gameMap[x][y].isPlayerTower) {
         tile.classList.add('tower');
@@ -209,22 +210,11 @@ function createMap() {
 }
 
 function towerAttack() {
-  for (const enemy of enemies) {
-    enemy.health -=
-      gameMap.reduce(
-        (a, b) =>
-          a +
-          b.reduce((c, d) => {
-            if (d.isPlayerTower === 1) {
-              c++;
-            }
-            return c;
-          }, 0),
-        0
-      ) * TURRETS[1].damage;
+  for (const tower of gameMap.flat().filter(a => a.isPlayerTower)) {
+    enemies[0].health -= TURRETS[1].damage;
+    enemyDeath(); // FIXME: checking if all enemies are dead if only the first one got shot (performance)
   }
 }
-
 function enemyDeath() {
   for (let i = 0; i < enemies.length; i++) {
     if (enemies[i].health <= 0) {
@@ -249,13 +239,42 @@ function spawnEnemy() {
   });
 }
 
+function sellTower(x: number, y: number) {
+  if (gameMap[x][y].isPlayerTower !== null) {
+    gameMap[x][y].isPlayerTower = null;
+    player.money += 30;
+    renderMap();
+  }
+}
+function openOptionsMenu(x: number, y: number) {
+  const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
+  optionsMenu.show();
+  const menuOption1 = document.querySelector('#menuOption1') as HTMLDivElement;
+  menuOption1.onclick = () => {
+    optionsMenu.close();
+    tileClick(x, y);
+  };
+  const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
+  menuOption2.onclick = () => {
+    optionsMenu.close();
+    tileClick(x, y);
+  };
+  const menuOption3 = document.querySelector('#menuOption3') as HTMLDivElement;
+  menuOption3.onclick = () => {
+    optionsMenu.close();
+    sellTower(x, y);
+  };
+}
 declare global {
   interface Window {
     game: () => void;
+    openOptionsMenu: (x: number, y: number) => void;
+    tileClick: (IndexX: number, IndexY: number) => void;
   }
 }
 window.game = game;
-
+window.openOptionsMenu = openOptionsMenu;
+window.tileClick = tileClick;
 function createPath() {
   path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY });
   path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY });

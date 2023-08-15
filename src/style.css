@@ -1,3 +1,7 @@
+:root{
+  --primary-color: #606c38;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -66,3 +70,24 @@ h1{
   width: 64px;
   height: 64px;}
 
+.optionsMenu{
+  margin-left: 18vh;
+  background-color: var(--primary-color);
+  padding:0;
+}
+.dialogStyle{
+display: flex;
+justify-content: space-between;
+flex-direction: column;
+}
+
+.optionObject{
+  background-color: var(--primary-color);
+  box-sizing: border-box;
+  font-size: 2rem;
+  padding: 6px;
+}
+
+.optionObject:hover{
+  background-color: #80914b;
+}
