@@ -199,8 +199,6 @@ function createMap() {
 
 function towerAttack() {
   for (const enemy of enemies) {
-    console.log(enemy.health);
-
     enemy.health -=
       gameMap.reduce(
         (a, b) =>
