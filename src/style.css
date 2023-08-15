@@ -18,7 +18,7 @@ h1{
 }
 
 .tile{
-  border: 1px solid black;
+  background-image: url(/mc-grass.png);
   box-sizing: border-box;
   width: 50px;
   height: 50px;
@@ -29,7 +29,7 @@ h1{
 
 .enemy{
   position: absolute;
-  background-color: crimson;
+  background-image: url(/mc-zombie.png);
   border: 1px solid black;
   width: 20px;
   height: 20px;
@@ -37,15 +37,19 @@ h1{
 }
 
 .tower{
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 50px;
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(/TurmL1.png)
+  background-image: url(/mc-dispender.png)
 }
 .path{
-  background-color: blueviolet;
+  background-image: url(/mc-sand.png)
 }
 
+.enemyBase{
+  background-image: url(/mc-spawner.png)
+  
+}
