@@ -141,22 +141,26 @@ function pixelToIndex(index: number) {
   return (index - 25) / 50;
 }
 function enemyMove() {
-  //   console.log(path[2].positionY); //1
   if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
-    //if pos is path target then
     enemy.pathPosition++;
-  }
-  if (!(pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY)) {
-    //if pos is not path target then
-    enemy.posY -= 1;
+  } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
+    enemy.posX--;
+  } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
+    enemy.posX++;
+  } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
+    enemy.posY--;
+  } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
+    enemy.posY++;
   }
   if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
     enemy.posX = indexToPixel(enemyBase.positionX);
     enemy.posY = indexToPixel(enemyBase.positionY);
-    playerDamage(20);
+    enemy.pathPosition = 0;
+    playerDamage(1);
     renderEnemy();
   }
 }
+
 function createMap() {
   for (let x = 0; x < gameSize; x++) {
     const gameRow: GameTile[] = [];
@@ -174,9 +178,35 @@ function createMap() {
 }
 
 function createPath() {
-  path.push({ positionX: 1, positionY: 2 });
-  path.push({ positionX: 1, positionY: 1 });
-  path.push({ positionX: 1, positionY: 0 });
+  // let pathX = gameSize - 1;
+  // let pathY = Math.floor(gameSize / 2);
+  // for (let x = 0; x < gameSize; x++) {
+  //   const direction = Math.floor(Math.random() * 3) + 1;
+  //   if (direction === 1) {
+  //     if (gameMap[pathX - 1]) {
+  //       console.log('test1');
+  //     }
+  //   }
+  //   if (direction === 2) {
+  //     if (gameMap[pathY + 1]) {
+  //       console.log('test2');
+  //     }
+  //   }
+  //   if (direction === 3) {
+  //     if (gameMap[pathY - 1]) {
+  //       console.log('test3');
+  //     }
+  //   }
+
+  path.push({ positionX: 3, positionY: 6 });
+  path.push({ positionX: 2, positionY: 6 });
+  path.push({ positionX: 2, positionY: 5 });
+  path.push({ positionX: 2, positionY: 4 });
+  path.push({ positionX: 2, positionY: 3 });
+  path.push({ positionX: 2, positionY: 2 });
+  path.push({ positionX: 2, positionY: 1 });
+  path.push({ positionX: 3, positionY: 1 });
+  path.push({ positionX: 3, positionY: 0 });
 }
 
 function towerAttack() {
