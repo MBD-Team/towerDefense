@@ -22,7 +22,7 @@ const path: {
 const enemies: Enemy[] = [];
 
 let interval: number;
-
+let towers = 0;
 let gameTicks = 0;
 //------------------------------
 const gameSizeX = 19;
@@ -152,9 +152,10 @@ function tileClick(IndexX: number, IndexY: number) {
   if (path.find(a => a.positionX === IndexX && a.positionY === IndexY)) {
     return;
   }
-  if (gameMap[IndexX][IndexY].isPlayerTower == null && player.money >= 50) {
+  if (gameMap[IndexX][IndexY].isPlayerTower == null && player.money >= 50 + 5 * towers) {
     gameMap[IndexX][IndexY].isPlayerTower = 1;
-    player.money -= 50;
+    player.money -= 50 + 5 * towers;
+    towers += 1;
   } else {
     gameMap[IndexX][IndexY].isPlayerTower = null;
   }
@@ -237,6 +238,7 @@ function sellTower(x: number, y: number) {
   if (gameMap[x][y].isPlayerTower !== null) {
     gameMap[x][y].isPlayerTower = null;
     player.money += 30;
+    towers -= 1;
     renderMap();
   }
 }
