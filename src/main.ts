@@ -43,7 +43,7 @@ const TURRETS = {
 
 const ENEMIES = {
   1: {
-    health: 5,
+    health: 15,
     money: 10,
   },
 };
@@ -102,6 +102,7 @@ function playerDamage(Damage: number) {
 
 function renderMap() {
   gameMap[enemyBase.positionX][enemyBase.positionY].isEnemyBase = true;
+  gameMap[player.positionX][player.positionY].isPlayerBase = true;
   const gameField = document.querySelector('.field');
   if (gameField !== null) {
     gameField.innerHTML = '';
@@ -118,7 +119,7 @@ function renderMap() {
         tile.classList.add('tower');
       }
       if (gameMap[x][y].isPlayerBase) {
-        tile.innerHTML = '💻';
+        tile.classList.add('playerBase');
       }
       if (gameMap[x][y].isEnemyBase) {
         tile.classList.add('enemyBase');
@@ -153,10 +154,10 @@ function tileClick(IndexX: number, IndexY: number) {
   }
 }
 function indexToPixel(index: number) {
-  return index * 50 + 25;
+  return index * 64 + 32;
 }
 function pixelToIndex(index: number) {
-  return (index - 25) / 50;
+  return (index - 32) / 64;
 }
 function enemyMove() {
   for (const enemy of enemies) {
