@@ -1,4 +1,5 @@
 import './style.css';
+import { createPath } from './path';
 type GameTile = {
   isPlayerTower: number | null;
   isPlayerBase: boolean;
@@ -6,7 +7,7 @@ type GameTile = {
   isEnemyPath: boolean;
 };
 
-const path: {
+export const path: {
   positionX: number;
   positionY: number;
 }[] = [];
@@ -17,7 +18,7 @@ let gameTicks = 0;
 //------------------------------
 const gameSize = 11;
 
-const player = {
+export const player = {
   positionX: Math.floor(gameSize / 2),
   positionY: 0,
   health: 20,
@@ -30,7 +31,7 @@ const TURRETS = {
   },
 };
 
-const enemyBase = {
+export const enemyBase = {
   positionY: gameSize - 1,
   positionX: Math.floor(gameSize / 2),
 };
@@ -63,6 +64,7 @@ function gameLoop() {
   if (gameTicks % 24 === 0) {
     towerAttack();
   }
+  enemyDeath();
   CheckWinLose();
   enemyMove();
   renderAll();
@@ -119,9 +121,10 @@ function renderMap() {
   }
 }
 function renderEnemy() {
+  document.querySelectorAll('.enemy').forEach(a => {
+    a.remove();
+  });
   for (const enemy of enemies) {
-    const deleteEnemy = document.querySelector('.enemy');
-    deleteEnemy?.remove();
     const enemyDiv = document.createElement('div');
     enemyDiv.className = 'enemy';
     enemyDiv.setAttribute('style', `top:${enemy.posY}px; left:${enemy.posX}px`);
@@ -182,55 +185,6 @@ function createMap() {
   }
 }
 
-function createPath() {
-  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY });
-  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY });
-  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY });
-  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY });
-  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY });
-  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY });
-  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY - 1 });
-  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX + 1, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 1 });
-  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 0 });
-  path.push({ positionX: enemyBase.positionX + 3, positionY: enemyBase.positionY - 0 });
-  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 0 });
-  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 1 });
-  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 2 });
-  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 3 });
-  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 4 });
-  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 5 });
-  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX + 3, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX + 1, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 5 });
-  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 4 });
-  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 4 });
-  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 4 });
-  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 5 });
-  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 6 });
-  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 7 });
-  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 8 });
-  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 8 });
-  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 8 });
-  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 8 });
-  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 8 });
-  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 9 });
-  //--------------------
-  path.push({ positionX: player.positionX, positionY: player.positionY });
-}
-
 function towerAttack() {
   for (const enemy of enemies) {
     console.log(enemy.health);
@@ -251,9 +205,9 @@ function towerAttack() {
 }
 
 function enemyDeath() {
-  for (const enemy of enemies) {
-    if (enemy.health <= 0) {
-      renderEnemy();
+  for (let i = 0; i < enemies.length; i++) {
+    if (enemies[i].health <= 0) {
+      enemies.splice(i, 1);
     }
   }
 }
