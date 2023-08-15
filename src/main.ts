@@ -51,10 +51,6 @@ const ENEMYOPTIONS = {
     money: 15,
   },
 };
-// const enemyBase = {
-//   positionY: path[0].positionX,
-//   positionX: path[0].positionY,
-// };
 
 const gameMap: GameTile[][] = [];
 
@@ -64,7 +60,6 @@ function game() {
   player.health = 20;
   createMap();
   createPath();
-  // generateEnemyPath();
   renderMap();
   interval = setInterval(gameLoop, 1000 / 24);
 }
@@ -213,13 +208,13 @@ function towerAttack() {
 function enemyDeath() {
   for (let i = 0; i < enemies.length; i++) {
     if (enemies[i].health <= 0) {
-      enemies.splice(i, 1);
       if (enemies[i].type === 'zombie') {
         player.money += ENEMYOPTIONS.zombie.money;
       }
       if (enemies[i].type === 'spider') {
         player.money += ENEMYOPTIONS.spider.money;
       }
+      enemies.splice(i, 1);
     }
   }
 }
