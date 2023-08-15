@@ -22,7 +22,7 @@ const path: {
 const enemies: Enemy[] = [];
 
 let interval: number;
-
+let towers = 0;
 let gameTicks = 0;
 //------------------------------
 const gameSizeX = 19;
@@ -83,7 +83,6 @@ function game() {
   player.health = 20;
   createMap();
   createPath();
-  // generateEnemyPath();
   renderMap();
   interval = setInterval(gameLoop, 1000 / 24);
 }
@@ -171,9 +170,10 @@ function tileClick(IndexX: number, IndexY: number) {
   if (path.find(a => a.positionX === IndexX && a.positionY === IndexY)) {
     return;
   }
-  if (gameMap[IndexX][IndexY].isPlayerTower == null && player.money >= 50) {
+  if (gameMap[IndexX][IndexY].isPlayerTower == null && player.money >= 50 + 5 * towers) {
     gameMap[IndexX][IndexY].isPlayerTower = 1;
-    player.money -= 50;
+    player.money -= 50 + 5 * towers;
+    towers += 1;
   } else {
     gameMap[IndexX][IndexY].isPlayerTower = null;
   }
@@ -199,8 +199,8 @@ function enemyMove() {
       enemy.posY += 2;
     }
     if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
-      enemy.posX = indexToPixel(enemyBase.positionX);
-      enemy.posY = indexToPixel(enemyBase.positionY);
+      enemy.posX = indexToPixel(path[0].positionX);
+      enemy.posY = indexToPixel(path[0].positionY);
       enemy.pathPosition = 0;
       playerDamage(1);
       renderEnemy();
@@ -231,7 +231,6 @@ function towerAttack() {
 function enemyDeath() {
   for (let i = 0; i < enemies.length; i++) {
     if (enemies[i].health <= 0) {
-      enemies.splice(i, 1);
       if (enemies[i].type === 'zombie') {
         player.money += ENEMY_OPTIONS.zombie.money;
       }
@@ -241,7 +240,6 @@ function enemyDeath() {
     }
   }
 }
-
 function waveGeneration() {
   waveCount++;
   let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
@@ -265,8 +263,8 @@ function spawnEnemy(type: EnemyTypes) {
   enemies.push({
     ...ENEMY_OPTIONS[type],
     pathPosition: 0,
-    posX: indexToPixel(enemyBase.positionX),
-    posY: indexToPixel(enemyBase.positionY),
+    posX: indexToPixel(path[0].positionX),
+    posY: indexToPixel(path[0].positionY),
     type: type,
   });
   return ENEMY_OPTIONS[type].strength;
@@ -276,6 +274,7 @@ function sellTower(x: number, y: number) {
   if (gameMap[x][y].isPlayerTower !== null) {
     gameMap[x][y].isPlayerTower = null;
     player.money += 30;
+    towers -= 1;
     renderMap();
   }
 }
@@ -308,11 +307,10 @@ declare global {
 window.game = game;
 window.openOptionsMenu = openOptionsMenu;
 window.tileClick = tileClick;
+//-----------------
 function createPath() {
   let pathY = gameSizeY - 1;
-  let pathX = Math.floor(gameSizeX / 2);
-  gameMap[pathX][pathY].isEmpty = false;
-  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY });
+  let pathX = Math.floor(Math.random() * gameSizeX) + 1;
   while (pathY > 0) {
     const direction = Math.floor(Math.random() * 100) + 1;
     //---------------------
@@ -339,7 +337,7 @@ function createPath() {
         }
       }
     }
-    if (gameMap[pathX][pathY - 1]) {
+    if (gameMap[pathX] && gameMap[pathX][pathY - 1]) {
       if (direction >= 90) {
         if (!path.find(field => field.positionX === pathX && field.positionY === pathY - 1)) {
           if (countPathConnected(pathX, pathY - 1) < 2) {

@@ -91,3 +91,17 @@ flex-direction: column;
 .optionObject:hover{
   background-color: #80914b;
 }
+
+.health20{
+  position: absolute;
+  width:  87px; 
+  /* width 174 is standard */
+  height: 30px;
+  object-fit: cover;
+  object-position: left bottom;
+}
+
+.health0{
+  width:  174px;
+  height: 30px;
+}
