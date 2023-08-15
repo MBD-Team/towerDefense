@@ -101,6 +101,7 @@ function playerDamage(Damage: number) {
 }
 
 function renderMap() {
+  gameMap[enemyBase.positionX][enemyBase.positionY].isEnemyBase = true;
   const gameField = document.querySelector('.field');
   if (gameField !== null) {
     gameField.innerHTML = '';
@@ -120,7 +121,7 @@ function renderMap() {
         tile.innerHTML = '💻';
       }
       if (gameMap[x][y].isEnemyBase) {
-        tile.innerHTML = '🛸';
+        tile.classList.add('enemyBase');
       }
       if (path.find(a => a.positionX === x && a.positionY === y)) {
         tile.classList.add('path');
