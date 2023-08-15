@@ -62,7 +62,7 @@ function game() {
   createMap();
   createPath();
   renderMap();
-  interval = setInterval(gameLoop, 1000 / 48);
+  interval = setInterval(gameLoop, 1000 / 24);
 }
 //------------------------
 function gameLoop() {
