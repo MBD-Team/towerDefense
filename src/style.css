@@ -14,14 +14,14 @@ h1{
 .field{
   position: relative;
   display: grid;
-  width: 300px;
 }
 
 .tile{
   background-image: url(/mc-grass.png);
+  object-fit: cover;
   box-sizing: border-box;
-  width: 50px;
-  height: 50px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,26 +30,39 @@ h1{
 .enemy{
   position: absolute;
   background-image: url(/mc-zombie.png);
+  object-fit: cover;
   border: 1px solid black;
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height:32px;
   transform: translate(-50%,-50%);
 }
 
 .tower{
   /* border: 1px solid black; */
-  width: 50px;
-  height: 50px;
+  width:64px;
+  height:64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(/mc-dispender.png)
+  background-image: url(/mc-dispender.png);
+  object-fit: cover;
 }
 .path{
-  background-image: url(/mc-sand.png)
+  background-image: url(/mc-sand.png);
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
 }
 
 .enemyBase{
-  background-image: url(/mc-spawner.png)
-  
+  background-image: url(/mc-spawner.png);
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
 }
+.playerBase{
+  background-image: url(/mc-head.png);
+  object-fit: cover;
+  width: 64px;
+  height: 64px;}
+
