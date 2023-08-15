@@ -11,7 +11,7 @@ const path: {
   positionY: number;
 }[] = [];
 //------------------------------
-const gameSize = 3;
+const gameSize = 7;
 
 const player = {
   positionX: Math.floor(gameSize / 2),
@@ -118,6 +118,7 @@ function pixelToIndex(index: number) {
   return (index - 25) / 50;
 }
 function enemyMove() {
+  console.log(path);
   //   console.log(path[2].positionY); //1
   if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
     //if pos is path target then
@@ -127,22 +128,12 @@ function enemyMove() {
     //if pos is not path target then
     enemy.posY -= 1;
   }
-  if (
-    pixelToIndex(enemy.posX) === path[enemy.pathPosition + path.length - 1].positionX &&
-    pixelToIndex(enemy.posY) === path[enemy.pathPosition + path.length - 1].positionY
-  ) {
+  if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
+    enemy.posX = indexToPixel(enemyBase.positionX);
+    enemy.posY = indexToPixel(enemyBase.positionY);
+    playerDamage(1);
     renderEnemy();
   }
-
-  //   if (!(enemy.posY < indexToPixel(player.positionY))) {
-  //     enemy.posY -= 1;
-  //   }
-  //   if (enemy.posY === indexToPixel(player.positionY)) {
-  //     enemy.posY = indexToPixel(enemyBase.positionY);
-  //     renderEnemy();
-  //     playerDamage(1);
-  //     renderPlayerStats();
-  //   }
 }
 function createMap() {
   for (let x = 0; x < gameSize; x++) {
