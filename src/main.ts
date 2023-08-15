@@ -1,6 +1,6 @@
 import './style.css';
 type GameTile = {
-  isPlayerTower: boolean;
+  isPlayerTower: number | null;
   isPlayerBase: boolean;
   isEnemyBase: boolean;
   isEnemyPath: boolean;
@@ -10,6 +10,10 @@ const path: {
   positionX: number;
   positionY: number;
 }[] = [];
+
+let interval: number;
+
+let gameTicks = 0;
 //------------------------------
 const gameSize = 7;
 
@@ -18,6 +22,12 @@ const player = {
   positionY: 0,
   health: 20,
   money: 100,
+};
+const TURRETS = {
+  1: {
+    cost: 20,
+    damage: 1,
+  },
 };
 
 const enemyBase = {
@@ -37,13 +47,20 @@ const gameMap: GameTile[][] = [];
 
 //----------------------------
 console.log(player.health);
-createMap();
-createPath();
-renderMap();
-const interval = setInterval(gameLoop, 1000 / 24);
-
+game();
+function game() {
+  player.health = 20;
+  createMap();
+  createPath();
+  renderMap();
+  interval = setInterval(gameLoop, 1000 / 24);
+}
 //------------------------
 function gameLoop() {
+  gameTicks++;
+  if (gameTicks % 24 === 0) {
+    towerAttack();
+  }
   CheckWinLose();
   enemyMove();
   renderAll();
@@ -61,6 +78,8 @@ function renderPlayerStats() {
 function CheckWinLose() {
   if (player.health <= 0) {
     clearInterval(interval);
+    const deathText = document.querySelector('.death') as HTMLDialogElement;
+    deathText.showModal();
   }
 }
 
@@ -108,7 +127,11 @@ function renderEnemy() {
 }
 
 function tileClick(IndexX: number, IndexY: number) {
-  gameMap[IndexX][IndexY].isPlayerTower = !gameMap[IndexX][IndexY].isPlayerTower;
+  if (gameMap[IndexX][IndexY].isPlayerTower == null) {
+    gameMap[IndexX][IndexY].isPlayerTower = 1;
+  } else {
+    gameMap[IndexX][IndexY].isPlayerTower = null;
+  }
   renderMap();
 }
 function indexToPixel(index: number) {
@@ -118,7 +141,6 @@ function pixelToIndex(index: number) {
   return (index - 25) / 50;
 }
 function enemyMove() {
-  console.log(path);
   //   console.log(path[2].positionY); //1
   if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
     //if pos is path target then
@@ -131,7 +153,7 @@ function enemyMove() {
   if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
     enemy.posX = indexToPixel(enemyBase.positionX);
     enemy.posY = indexToPixel(enemyBase.positionY);
-    playerDamage(1);
+    playerDamage(20);
     renderEnemy();
   }
 }
@@ -140,7 +162,7 @@ function createMap() {
     const gameRow: GameTile[] = [];
     for (let y = 0; y < gameSize; y++) {
       const tile: GameTile = {
-        isPlayerTower: false,
+        isPlayerTower: null,
         isPlayerBase: false,
         isEnemyBase: false,
         isEnemyPath: false,
@@ -156,3 +178,28 @@ function createPath() {
   path.push({ positionX: 1, positionY: 1 });
   path.push({ positionX: 1, positionY: 0 });
 }
+
+function towerAttack() {
+  console.log(enemy.health);
+
+  enemy.health -=
+    gameMap.reduce(
+      (a, b) =>
+        a +
+        b.reduce((c, d) => {
+          if (d.isPlayerTower === 1) {
+            c++;
+          }
+          return c;
+        }, 0),
+      0
+    ) * TURRETS[1].damage;
+}
+
+declare global {
+  interface Window {
+    game: () => void;
+  }
+}
+
+window.game = game;

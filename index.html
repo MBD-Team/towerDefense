@@ -10,6 +10,10 @@
     <h1>Tower Defense</h1>
     <p class="health"></p>
     <div class="field"></div>
+    <dialog class="death">
+      <p>You lost</p>
+      <button class="reset" onclick="document.querySelector('.death').close(); game()">Restart</button>
+    </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
