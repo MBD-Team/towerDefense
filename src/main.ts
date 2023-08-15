@@ -4,9 +4,9 @@ type GameTile = {
   isPlayerTower: number | null;
   isEmpty: boolean;
 };
-
+type EnemyTypes = 'zombie' | 'skeleton' | 'spider' | 'enderman' | 'bat';
 type Enemy = {
-  type: keyof typeof ENEMYOPTIONS;
+  type: EnemyTypes;
   pathPosition: number;
   posX: number;
   posY: number;
@@ -28,7 +28,9 @@ let gameTicks = 0;
 const gameSizeX = 19;
 const gameSizeY = 11;
 
-export const player = {
+let waveCount = 0;
+
+const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
@@ -41,17 +43,34 @@ const TURRETS = {
   },
 };
 
-const ENEMYOPTIONS = {
+const ENEMY_OPTIONS = {
   zombie: {
-    health: 5,
+    health: 7,
     money: 10,
+    strength: 6,
   },
   spider: {
     health: 3,
-    money: 15,
+    money: 5,
+    strength: 4,
+  },
+  skeleton: {
+    health: 5,
+    money: 7,
+    strength: 5,
+  },
+  enderman: {
+    health: 15,
+    money: 20,
+    strength: 12,
+  },
+  bat: {
+    health: 1,
+    money: 1,
+    strength: 1,
   },
 };
-export const enemyBase = {
+const enemyBase = {
   positionY: gameSizeY - 1,
   positionX: Math.floor(gameSizeX / 2),
 };
@@ -75,8 +94,8 @@ function gameLoop() {
     towerAttack();
   }
 
-  if (gameTicks % 12 === 0) {
-    spawnEnemy();
+  if ((gameTicks % 24) * 30 === 0) {
+    waveGeneration();
   }
 
   CheckWinLose();
@@ -206,7 +225,7 @@ function createMap() {
 function towerAttack() {
   for (const tower of gameMap.flat().filter(a => a.isPlayerTower)) {
     enemies[0].health -= TURRETS[1].damage;
-    enemyDeath(); // FIXME: checking if all enemies are dead if only the first one got shot (performance)
+    enemyDeath(); // FIXME: checking if all enemies are dead while only the first one got shot (performance problems maybe)
   }
 }
 function enemyDeath() {
@@ -214,23 +233,43 @@ function enemyDeath() {
     if (enemies[i].health <= 0) {
       enemies.splice(i, 1);
       if (enemies[i].type === 'zombie') {
-        player.money += ENEMYOPTIONS.zombie.money;
+        player.money += ENEMY_OPTIONS.zombie.money;
       }
       if (enemies[i].type === 'spider') {
-        player.money += ENEMYOPTIONS.spider.money;
+        player.money += ENEMY_OPTIONS.spider.money;
       }
     }
   }
 }
 
-function spawnEnemy() {
+function waveGeneration() {
+  waveCount++;
+  let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
+  while (waveStrength > 0) {
+    const random = Math.random() * 100;
+    if (random <= 5) {
+      waveStrength -= spawnEnemy('enderman');
+    } else if (random <= 50 && random > 5) {
+      waveStrength -= spawnEnemy('zombie');
+    } else if (random <= 70 && random > 50) {
+      waveStrength -= spawnEnemy('skeleton');
+    } else if (random <= 85 && random > 70) {
+      waveStrength -= spawnEnemy('bat');
+    } else {
+      waveStrength -= spawnEnemy('spider');
+    }
+  }
+}
+
+function spawnEnemy(type: EnemyTypes) {
   enemies.push({
-    ...ENEMYOPTIONS.zombie,
+    ...ENEMY_OPTIONS[type],
     pathPosition: 0,
     posX: indexToPixel(enemyBase.positionX),
     posY: indexToPixel(enemyBase.positionY),
-    type: 'zombie',
+    type: type,
   });
+  return ENEMY_OPTIONS[type].strength;
 }
 
 function sellTower(x: number, y: number) {
