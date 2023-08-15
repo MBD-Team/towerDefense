@@ -26,6 +26,7 @@ const enemyBase = {
 };
 
 const enemy = {
+  pathPosition: 0,
   posX: indexToPixel(enemyBase.positionX),
   posY: indexToPixel(enemyBase.positionY),
   health: 1,
@@ -73,8 +74,8 @@ function renderMap() {
     gameField.innerHTML = '';
   }
   gameField?.setAttribute('style', `grid-template-columns: repeat(${gameSize},1fr); width: ${50 * gameSize}px;`);
-  for (let x = 0; x < gameSize; x++) {
-    for (let y = 0; y < gameSize; y++) {
+  for (let y = 0; y < gameSize; y++) {
+    for (let x = 0; x < gameSize; x++) {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.onclick = () => {
@@ -88,6 +89,9 @@ function renderMap() {
       }
       if (gameMap[x][y].isEnemyBase) {
         tile.innerHTML = '🛸';
+      }
+      if (path.find(a => a.positionX === x && a.positionY === y)) {
+        tile.classList.add('path');
       }
       gameField?.appendChild(tile);
     }
@@ -110,17 +114,35 @@ function tileClick(IndexX: number, IndexY: number) {
 function indexToPixel(index: number) {
   return index * 50 + 25;
 }
-
+function pixelToIndex(index: number) {
+  return (index - 25) / 50;
+}
 function enemyMove() {
-  if (!(enemy.posY < indexToPixel(player.positionY))) {
+  //   console.log(path[2].positionY); //1
+  if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
+    //if pos is path target then
+    enemy.pathPosition++;
+  }
+  if (!(pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY)) {
+    //if pos is not path target then
     enemy.posY -= 1;
   }
-  if (enemy.posY === indexToPixel(player.positionY)) {
-    enemy.posY = indexToPixel(enemyBase.positionY);
+  if (
+    pixelToIndex(enemy.posX) === path[enemy.pathPosition + path.length - 1].positionX &&
+    pixelToIndex(enemy.posY) === path[enemy.pathPosition + path.length - 1].positionY
+  ) {
     renderEnemy();
-    playerDamage(1);
-    renderPlayerStats();
   }
+
+  //   if (!(enemy.posY < indexToPixel(player.positionY))) {
+  //     enemy.posY -= 1;
+  //   }
+  //   if (enemy.posY === indexToPixel(player.positionY)) {
+  //     enemy.posY = indexToPixel(enemyBase.positionY);
+  //     renderEnemy();
+  //     playerDamage(1);
+  //     renderPlayerStats();
+  //   }
 }
 function createMap() {
   for (let x = 0; x < gameSize; x++) {
@@ -139,9 +161,7 @@ function createMap() {
 }
 
 function createPath() {
-  for (let x = 0; x < gameSize; x++) {
-    for (let y = 0; y < gameSize; y++) {
-      console.log(gameMap[x][y].isEnemyPath);
-    }
-  }
+  path.push({ positionX: 1, positionY: 2 });
+  path.push({ positionX: 1, positionY: 1 });
+  path.push({ positionX: 1, positionY: 0 });
 }
