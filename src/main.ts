@@ -107,7 +107,7 @@ function renderMap() {
   if (gameField !== null) {
     gameField.innerHTML = '';
   }
-  gameField?.setAttribute('style', `grid-template-columns: repeat(${gameSize},1fr); width: ${50 * gameSize}px;`);
+  gameField?.setAttribute('style', `grid-template-columns: repeat(${gameSize},1fr); width: ${64 * gameSize}px;`);
   for (let y = 0; y < gameSize; y++) {
     for (let x = 0; x < gameSize; x++) {
       const tile = document.createElement('div');
