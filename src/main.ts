@@ -51,10 +51,10 @@ const ENEMYOPTIONS = {
     money: 15,
   },
 };
-export const enemyBase = {
-  positionY: gameSizeY - 1,
-  positionX: Math.floor(gameSizeX / 2),
-};
+// const enemyBase = {
+//   positionY: path[0].positionX,
+//   positionX: path[0].positionY,
+// };
 
 const gameMap: GameTile[][] = [];
 
@@ -180,8 +180,8 @@ function enemyMove() {
       enemy.posY += 2;
     }
     if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
-      enemy.posX = indexToPixel(enemyBase.positionX);
-      enemy.posY = indexToPixel(enemyBase.positionY);
+      enemy.posX = indexToPixel(path[0].positionX);
+      enemy.posY = indexToPixel(path[0].positionY);
       enemy.pathPosition = 0;
       playerDamage(1);
       renderEnemy();
@@ -227,8 +227,8 @@ function spawnEnemy() {
   enemies.push({
     ...ENEMYOPTIONS.zombie,
     pathPosition: 0,
-    posX: indexToPixel(enemyBase.positionX),
-    posY: indexToPixel(enemyBase.positionY),
+    posX: indexToPixel(path[0].positionX),
+    posY: indexToPixel(path[0].positionY),
     type: 'zombie',
   });
 }
@@ -269,11 +269,10 @@ declare global {
 window.game = game;
 window.openOptionsMenu = openOptionsMenu;
 window.tileClick = tileClick;
+//-----------------
 function createPath() {
   let pathY = gameSizeY - 1;
-  let pathX = Math.floor(gameSizeX / 2);
-  gameMap[pathX][pathY].isEmpty = false;
-  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY });
+  let pathX = Math.floor(Math.random() * gameSizeX) + 1;
   while (pathY > 0) {
     const direction = Math.floor(Math.random() * 100) + 1;
     //---------------------
@@ -300,7 +299,7 @@ function createPath() {
         }
       }
     }
-    if (gameMap[pathX][pathY - 1]) {
+    if (gameMap[pathX] && gameMap[pathX][pathY - 1]) {
       if (direction >= 90) {
         if (!path.find(field => field.positionX === pathX && field.positionY === pathY - 1)) {
           if (countPathConnected(pathX, pathY - 1) < 2) {
