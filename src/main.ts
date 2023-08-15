@@ -118,23 +118,36 @@ function pixelToIndex(index: number) {
   return (index - 25) / 50;
 }
 function enemyMove() {
-  console.log(path);
-  //   console.log(path[2].positionY); //1
+  // console.log('enemyX', enemy.posX);
+  // console.log(indexToPixel(path[enemy.pathPosition + 1].positionX));
+  // console.log('enemyY', enemy.posY);
+  // console.log(indexToPixel(path[enemy.pathPosition + 1].positionY));
+  console.log('enemyX', pixelToIndex(enemy.posX));
+  console.log(path[enemy.pathPosition + 1].positionX);
+  console.log('is', enemy.posX - path[enemy.pathPosition + 1].positionX);
+  console.log('enemyY', pixelToIndex(enemy.posY));
+  console.log(path[enemy.pathPosition + 1].positionY);
+  console.log('is', enemy.posY - path[enemy.pathPosition + 1].positionY);
   if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
-    //if pos is path target then
     enemy.pathPosition++;
-  }
-  if (!(pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY)) {
-    //if pos is not path target then
-    enemy.posY -= 1;
+  } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
+    enemy.posX--;
+  } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
+    enemy.posX++;
+  } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
+    enemy.posY--;
+  } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
+    enemy.posY++;
   }
   if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
     enemy.posX = indexToPixel(enemyBase.positionX);
     enemy.posY = indexToPixel(enemyBase.positionY);
+    enemy.pathPosition = 0;
     playerDamage(1);
     renderEnemy();
   }
 }
+
 function createMap() {
   for (let x = 0; x < gameSize; x++) {
     const gameRow: GameTile[] = [];
@@ -152,7 +165,13 @@ function createMap() {
 }
 
 function createPath() {
-  path.push({ positionX: 1, positionY: 2 });
-  path.push({ positionX: 1, positionY: 1 });
-  path.push({ positionX: 1, positionY: 0 });
+  path.push({ positionX: 3, positionY: 6 });
+  path.push({ positionX: 2, positionY: 6 });
+  path.push({ positionX: 2, positionY: 5 });
+  path.push({ positionX: 2, positionY: 4 });
+  path.push({ positionX: 2, positionY: 3 });
+  path.push({ positionX: 2, positionY: 2 });
+  path.push({ positionX: 2, positionY: 1 });
+  path.push({ positionX: 3, positionY: 1 });
+  path.push({ positionX: 3, positionY: 0 });
 }
