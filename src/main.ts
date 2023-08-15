@@ -1,5 +1,5 @@
 import './style.css';
-import { createPath } from './path';
+
 type GameTile = {
   isPlayerTower: number | null;
   isPlayerBase: boolean;
@@ -15,7 +15,7 @@ type Enemy = {
   money: number;
 };
 /** @description position as Index */
-export const path: {
+const path: {
   positionX: number;
   positionY: number;
 }[] = [];
@@ -62,7 +62,7 @@ function game() {
   createMap();
   createPath();
   renderMap();
-  interval = setInterval(gameLoop, 1000 / 24);
+  interval = setInterval(gameLoop, 1000 / 48);
 }
 //------------------------
 function gameLoop() {
@@ -231,5 +231,52 @@ declare global {
     game: () => void;
   }
 }
-
+function createPath() {
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY - 1 });
+  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 1, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 1 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 0 });
+  path.push({ positionX: enemyBase.positionX + 3, positionY: enemyBase.positionY - 0 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 0 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 1 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 3 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 5 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX + 3, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX + 1, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 5 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 5 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 7 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 9 });
+  //--------------------
+  path.push({ positionX: player.positionX, positionY: player.positionY });
+}
 window.game = game;
