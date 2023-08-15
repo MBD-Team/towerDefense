@@ -155,26 +155,6 @@ function createMap() {
 }
 
 function createPath() {
-  // let pathX = gameSize - 1;
-  // let pathY = Math.floor(gameSize / 2);
-  // for (let x = 0; x < gameSize; x++) {
-  //   const direction = Math.floor(Math.random() * 3) + 1;
-  //   if (direction === 1) {
-  //     if (gameMap[pathX - 1]) {
-  //       console.log('test1');
-  //     }
-  //   }
-  //   if (direction === 2) {
-  //     if (gameMap[pathY + 1]) {
-  //       console.log('test2');
-  //     }
-  //   }
-  //   if (direction === 3) {
-  //     if (gameMap[pathY - 1]) {
-  //       console.log('test3');
-  //     }
-  //   }
-
   path.push({ positionX: 3, positionY: 6 });
   path.push({ positionX: 2, positionY: 6 });
   path.push({ positionX: 2, positionY: 5 });
