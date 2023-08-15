@@ -7,10 +7,20 @@ type GameTile = {
   isEnemyPath: boolean;
 };
 
+type Enemy = {
+  pathPosition: number;
+  posX: number;
+  posY: number;
+  health: number;
+  money: number;
+};
+/** @description position as Index */
 export const path: {
   positionX: number;
   positionY: number;
 }[] = [];
+/** @description position as Pixel @description pathPosition as Index */
+const enemies: Enemy[] = [];
 
 let interval: number;
 
@@ -31,20 +41,16 @@ const TURRETS = {
   },
 };
 
+const ENEMIES = {
+  1: {
+    health: 5,
+    money: 10,
+  },
+};
 export const enemyBase = {
   positionY: gameSize - 1,
   positionX: Math.floor(gameSize / 2),
 };
-
-const enemies = [
-  {
-    pathPosition: 0,
-    posX: indexToPixel(enemyBase.positionX),
-    posY: indexToPixel(enemyBase.positionY),
-    health: 1,
-    money: 1,
-  },
-];
 
 const gameMap: GameTile[][] = [];
 
@@ -63,6 +69,9 @@ function gameLoop() {
   gameTicks++;
   if (gameTicks % 24 === 0) {
     towerAttack();
+  }
+  if (gameTicks % 24 === 0) {
+    spawnEnemy();
   }
   enemyDeath();
   CheckWinLose();
@@ -133,12 +142,14 @@ function renderEnemy() {
   }
 }
 function tileClick(IndexX: number, IndexY: number) {
-  if (gameMap[IndexX][IndexY].isPlayerTower == null) {
-    gameMap[IndexX][IndexY].isPlayerTower = 1;
-  } else {
-    gameMap[IndexX][IndexY].isPlayerTower = null;
+  if (path.find(a => a.positionX !== IndexX && a.positionY !== IndexY)) {
+    if (gameMap[IndexX][IndexY].isPlayerTower == null) {
+      gameMap[IndexX][IndexY].isPlayerTower = 1;
+    } else {
+      gameMap[IndexX][IndexY].isPlayerTower = null;
+    }
+    renderMap();
   }
-  renderMap();
 }
 function indexToPixel(index: number) {
   return index * 50 + 25;
@@ -210,6 +221,10 @@ function enemyDeath() {
       enemies.splice(i, 1);
     }
   }
+}
+
+function spawnEnemy() {
+  enemies.push({ ...ENEMIES[1], pathPosition: 0, posX: indexToPixel(enemyBase.positionX), posY: indexToPixel(enemyBase.positionY) });
 }
 
 declare global {
