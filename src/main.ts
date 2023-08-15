@@ -8,7 +8,7 @@ type GameTile = {
 };
 
 type Enemy = {
-  type: keyof typeof ENEMIES;
+  type: keyof typeof ENEMYOPTIONS;
   pathPosition: number;
   posX: number;
   posY: number;
@@ -42,7 +42,7 @@ const TURRETS = {
   },
 };
 
-const ENEMIES = {
+const ENEMYOPTIONS = {
   zombie: {
     health: 5,
     money: 10,
@@ -152,14 +152,16 @@ function renderEnemy() {
   }
 }
 function tileClick(IndexX: number, IndexY: number) {
-  if (path.find(a => a.positionX !== IndexX && a.positionY !== IndexY)) {
-    if (gameMap[IndexX][IndexY].isPlayerTower == null) {
-      gameMap[IndexX][IndexY].isPlayerTower = 1;
-    } else {
-      gameMap[IndexX][IndexY].isPlayerTower = null;
-    }
-    renderMap();
+  if (path.find(a => a.positionX === IndexX && a.positionY === IndexY)) {
+    return;
   }
+  if (gameMap[IndexX][IndexY].isPlayerTower == null && player.money >= 50) {
+    gameMap[IndexX][IndexY].isPlayerTower = 1;
+    player.money -= 50;
+  } else {
+    gameMap[IndexX][IndexY].isPlayerTower = null;
+  }
+  renderMap();
 }
 function indexToPixel(index: number) {
   return index * 64 + 32;
@@ -228,10 +230,10 @@ function enemyDeath() {
     if (enemies[i].health <= 0) {
       enemies.splice(i, 1);
       if (enemies[i].type === 'zombie') {
-        player.money += ENEMIES.zombie.money;
+        player.money += ENEMYOPTIONS.zombie.money;
       }
       if (enemies[i].type === 'spider') {
-        player.money += ENEMIES.spider.money;
+        player.money += ENEMYOPTIONS.spider.money;
       }
     }
   }
@@ -239,7 +241,7 @@ function enemyDeath() {
 
 function spawnEnemy() {
   enemies.push({
-    ...ENEMIES.zombie,
+    ...ENEMYOPTIONS.zombie,
     pathPosition: 0,
     posX: indexToPixel(enemyBase.positionX),
     posY: indexToPixel(enemyBase.positionY),
