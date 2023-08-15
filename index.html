@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/TurmL1.png" />
+    <link rel="icon" type="image/png" href="mc-zombie.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tower Defense</title>
   </head>
@@ -14,6 +14,17 @@
     <dialog class="death">
       <p>You lost</p>
       <button class="reset" onclick="document.querySelector('.death').close(); game()">Restart</button>
+    </dialog>
+    <dialog class="optionsMenu">
+      <div class="dialogStyle">
+        <div class="optionObject" id="menuOption1">
+          <p>Tier I Dispenser</p>
+        </div>
+        <div class="optionObject" id="menuOption2">
+          <p>Tier II Dispenser</p>
+        </div>
+        <div class="optionObject" id="menuOption3">Sell Tower</div>
+      </div>
     </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
