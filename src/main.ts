@@ -8,6 +8,7 @@ type GameTile = {
 };
 
 type Enemy = {
+  type: keyof typeof ENEMIES;
   pathPosition: number;
   posX: number;
   posY: number;
@@ -42,9 +43,13 @@ const TURRETS = {
 };
 
 const ENEMIES = {
-  1: {
+  zombie: {
     health: 5,
     money: 10,
+  },
+  spider: {
+    health: 3,
+    money: 15,
   },
 };
 export const enemyBase = {
@@ -62,7 +67,7 @@ function game() {
   createMap();
   createPath();
   renderMap();
-  interval = setInterval(gameLoop, 1000 / 48);
+  interval = setInterval(gameLoop, 1000 / 24);
 }
 //------------------------
 function gameLoop() {
@@ -77,6 +82,7 @@ function gameLoop() {
   CheckWinLose();
   enemyMove();
   renderAll();
+  console.log(player.money);
 }
 
 function renderAll() {
@@ -86,6 +92,8 @@ function renderAll() {
 function renderPlayerStats() {
   const health = document.querySelector('.health') as HTMLDivElement;
   health.innerText = `Player Health = ${player.health}`;
+  const money = document.querySelector('.money') as HTMLDivElement;
+  money.innerText = `Money = ${player.money}`;
 }
 
 function CheckWinLose() {
@@ -218,12 +226,24 @@ function enemyDeath() {
   for (let i = 0; i < enemies.length; i++) {
     if (enemies[i].health <= 0) {
       enemies.splice(i, 1);
+      if (enemies[i].type === 'zombie') {
+        player.money += ENEMIES.zombie.money;
+      }
+      if (enemies[i].type === 'spider') {
+        player.money += ENEMIES.spider.money;
+      }
     }
   }
 }
 
 function spawnEnemy() {
-  enemies.push({ ...ENEMIES[1], pathPosition: 0, posX: indexToPixel(enemyBase.positionX), posY: indexToPixel(enemyBase.positionY) });
+  enemies.push({
+    ...ENEMIES.zombie,
+    pathPosition: 0,
+    posX: indexToPixel(enemyBase.positionX),
+    posY: indexToPixel(enemyBase.positionY),
+    type: 'zombie',
+  });
 }
 
 declare global {
@@ -231,6 +251,8 @@ declare global {
     game: () => void;
   }
 }
+window.game = game;
+
 function createPath() {
   path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY });
   path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY });
@@ -279,4 +301,3 @@ function createPath() {
   //--------------------
   path.push({ positionX: player.positionX, positionY: player.positionY });
 }
-window.game = game;
