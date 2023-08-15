@@ -34,7 +34,7 @@ export const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
-  money: 1000,
+  money: 100,
 };
 const TURRETS = {
   1: {
