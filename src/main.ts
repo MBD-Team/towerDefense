@@ -118,16 +118,6 @@ function pixelToIndex(index: number) {
   return (index - 25) / 50;
 }
 function enemyMove() {
-  // console.log('enemyX', enemy.posX);
-  // console.log(indexToPixel(path[enemy.pathPosition + 1].positionX));
-  // console.log('enemyY', enemy.posY);
-  // console.log(indexToPixel(path[enemy.pathPosition + 1].positionY));
-  console.log('enemyX', pixelToIndex(enemy.posX));
-  console.log(path[enemy.pathPosition + 1].positionX);
-  console.log('is', enemy.posX - path[enemy.pathPosition + 1].positionX);
-  console.log('enemyY', pixelToIndex(enemy.posY));
-  console.log(path[enemy.pathPosition + 1].positionY);
-  console.log('is', enemy.posY - path[enemy.pathPosition + 1].positionY);
   if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
     enemy.pathPosition++;
   } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
@@ -165,6 +155,26 @@ function createMap() {
 }
 
 function createPath() {
+  // let pathX = gameSize - 1;
+  // let pathY = Math.floor(gameSize / 2);
+  // for (let x = 0; x < gameSize; x++) {
+  //   const direction = Math.floor(Math.random() * 3) + 1;
+  //   if (direction === 1) {
+  //     if (gameMap[pathX - 1]) {
+  //       console.log('test1');
+  //     }
+  //   }
+  //   if (direction === 2) {
+  //     if (gameMap[pathY + 1]) {
+  //       console.log('test2');
+  //     }
+  //   }
+  //   if (direction === 3) {
+  //     if (gameMap[pathY - 1]) {
+  //       console.log('test3');
+  //     }
+  //   }
+
   path.push({ positionX: 3, positionY: 6 });
   path.push({ positionX: 2, positionY: 6 });
   path.push({ positionX: 2, positionY: 5 });
@@ -175,3 +185,5 @@ function createPath() {
   path.push({ positionX: 3, positionY: 1 });
   path.push({ positionX: 3, positionY: 0 });
 }
+
+//----------------------
