@@ -141,7 +141,6 @@ function createMap() {
 function createPath() {
   for (let x = 0; x < gameSize; x++) {
     for (let y = 0; y < gameSize; y++) {
-      gameMap[enemyBase.positionY][y].isEnemyPath = true;
       console.log(gameMap[x][y].isEnemyPath);
     }
   }
