@@ -15,7 +15,7 @@ let interval: number;
 
 let gameTicks = 0;
 //------------------------------
-const gameSize = 7;
+const gameSize = 11;
 
 const player = {
   positionX: Math.floor(gameSize / 2),
@@ -35,13 +35,15 @@ const enemyBase = {
   positionX: Math.floor(gameSize / 2),
 };
 
-const enemy = {
-  pathPosition: 0,
-  posX: indexToPixel(enemyBase.positionX),
-  posY: indexToPixel(enemyBase.positionY),
-  health: 1,
-  money: 1,
-};
+const enemies = [
+  {
+    pathPosition: 0,
+    posX: indexToPixel(enemyBase.positionX),
+    posY: indexToPixel(enemyBase.positionY),
+    health: 1,
+    money: 1,
+  },
+];
 
 const gameMap: GameTile[][] = [];
 
@@ -117,15 +119,16 @@ function renderMap() {
   }
 }
 function renderEnemy() {
-  const deleteEnemy = document.querySelector('.enemy');
-  deleteEnemy?.remove();
-  const enemyDiv = document.createElement('div');
-  enemyDiv.className = 'enemy';
-  enemyDiv.setAttribute('style', `top:${enemy.posY}px; left:${enemy.posX}px`);
-  const gameField = document.querySelector('.field');
-  gameField?.appendChild(enemyDiv);
+  for (const enemy of enemies) {
+    const deleteEnemy = document.querySelector('.enemy');
+    deleteEnemy?.remove();
+    const enemyDiv = document.createElement('div');
+    enemyDiv.className = 'enemy';
+    enemyDiv.setAttribute('style', `top:${enemy.posY}px; left:${enemy.posX}px`);
+    const gameField = document.querySelector('.field');
+    gameField?.appendChild(enemyDiv);
+  }
 }
-
 function tileClick(IndexX: number, IndexY: number) {
   if (gameMap[IndexX][IndexY].isPlayerTower == null) {
     gameMap[IndexX][IndexY].isPlayerTower = 1;
@@ -141,23 +144,25 @@ function pixelToIndex(index: number) {
   return (index - 25) / 50;
 }
 function enemyMove() {
-  if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
-    enemy.pathPosition++;
-  } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
-    enemy.posX--;
-  } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
-    enemy.posX++;
-  } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
-    enemy.posY--;
-  } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
-    enemy.posY++;
-  }
-  if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
-    enemy.posX = indexToPixel(enemyBase.positionX);
-    enemy.posY = indexToPixel(enemyBase.positionY);
-    enemy.pathPosition = 0;
-    playerDamage(1);
-    renderEnemy();
+  for (const enemy of enemies) {
+    if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
+      enemy.pathPosition++;
+    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
+      enemy.posX--;
+    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
+      enemy.posX++;
+    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
+      enemy.posY--;
+    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
+      enemy.posY++;
+    }
+    if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
+      enemy.posX = indexToPixel(enemyBase.positionX);
+      enemy.posY = indexToPixel(enemyBase.positionY);
+      enemy.pathPosition = 0;
+      playerDamage(1);
+      renderEnemy();
+    }
   }
 }
 
@@ -178,26 +183,6 @@ function createMap() {
 }
 
 function createPath() {
-  // let pathX = gameSize - 1;
-  // let pathY = Math.floor(gameSize / 2);
-  // for (let x = 0; x < gameSize; x++) {
-  //   const direction = Math.floor(Math.random() * 3) + 1;
-  //   if (direction === 1) {
-  //     if (gameMap[pathX - 1]) {
-  //       console.log('test1');
-  //     }
-  //   }
-  //   if (direction === 2) {
-  //     if (gameMap[pathY + 1]) {
-  //       console.log('test2');
-  //     }
-  //   }
-  //   if (direction === 3) {
-  //     if (gameMap[pathY - 1]) {
-  //       console.log('test3');
-  //     }
-  //   }
-
   path.push({ positionX: 3, positionY: 6 });
   path.push({ positionX: 2, positionY: 6 });
   path.push({ positionX: 2, positionY: 5 });
@@ -210,20 +195,30 @@ function createPath() {
 }
 
 function towerAttack() {
-  console.log(enemy.health);
+  for (const enemy of enemies) {
+    console.log(enemy.health);
 
-  enemy.health -=
-    gameMap.reduce(
-      (a, b) =>
-        a +
-        b.reduce((c, d) => {
-          if (d.isPlayerTower === 1) {
-            c++;
-          }
-          return c;
-        }, 0),
-      0
-    ) * TURRETS[1].damage;
+    enemy.health -=
+      gameMap.reduce(
+        (a, b) =>
+          a +
+          b.reduce((c, d) => {
+            if (d.isPlayerTower === 1) {
+              c++;
+            }
+            return c;
+          }, 0),
+        0
+      ) * TURRETS[1].damage;
+  }
+}
+
+function enemyDeath() {
+  for (const enemy of enemies) {
+    if (enemy.health <= 0) {
+      renderEnemy();
+    }
+  }
 }
 
 declare global {
