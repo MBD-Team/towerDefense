@@ -15,7 +15,7 @@ let interval: number;
 
 let gameTicks = 0;
 //------------------------------
-const gameSize = 7;
+const gameSize = 11;
 
 const player = {
   positionX: Math.floor(gameSize / 2),
@@ -144,13 +144,13 @@ function enemyMove() {
   if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
     enemy.pathPosition++;
   } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
-    enemy.posX--;
+    enemy.posX -= 2;
   } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
-    enemy.posX++;
+    enemy.posX += 2;
   } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
-    enemy.posY--;
+    enemy.posY -= 2;
   } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
-    enemy.posY++;
+    enemy.posY += 2;
   }
   if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
     enemy.posX = indexToPixel(enemyBase.positionX);
@@ -178,15 +178,52 @@ function createMap() {
 }
 
 function createPath() {
-  path.push({ positionX: 3, positionY: 6 });
-  path.push({ positionX: 2, positionY: 6 });
-  path.push({ positionX: 2, positionY: 5 });
-  path.push({ positionX: 2, positionY: 4 });
-  path.push({ positionX: 2, positionY: 3 });
-  path.push({ positionX: 2, positionY: 2 });
-  path.push({ positionX: 2, positionY: 1 });
-  path.push({ positionX: 3, positionY: 1 });
-  path.push({ positionX: 3, positionY: 0 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY });
+  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY - 1 });
+  path.push({ positionX: enemyBase.positionX - 5, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 1, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 1 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 0 });
+  path.push({ positionX: enemyBase.positionX + 3, positionY: enemyBase.positionY - 0 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 0 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 1 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 2 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 3 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 5 });
+  path.push({ positionX: enemyBase.positionX + 4, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX + 3, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX + 2, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX + 1, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 5 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 4 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 5 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 6 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 7 });
+  path.push({ positionX: enemyBase.positionX - 4, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX - 3, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX - 2, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX - 1, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 8 });
+  path.push({ positionX: enemyBase.positionX, positionY: enemyBase.positionY - 9 });
+  //--------------------
+  path.push({ positionX: player.positionX, positionY: player.positionY });
 }
 
 function towerAttack() {
