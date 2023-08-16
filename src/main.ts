@@ -44,6 +44,8 @@ const gameSizeY = 11;
 let waveCount = 0;
 const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
+const expFull = document.querySelector('.expFull');
+expFull?.setAttribute('style', `width:  162px; `);
 let playerMoney = 100;
 // let copper = 0;
 // let iron = 0;
@@ -56,6 +58,8 @@ const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
+  exp: 0,
+  level: 1,
 };
 
 const TURRET_OPTIONS = {
@@ -120,6 +124,8 @@ function game() {
 }
 
 function reset() {
+  player.exp = 0;
+  player.level = 0;
   player.health = 20;
   playerMoney = 100;
   playerDamage(0);
@@ -142,6 +148,7 @@ function gameLoop() {
   checkWinLose();
   enemyMove();
   renderAll();
+  playerXP();
 }
 
 //-----------------------Renders---------------------------
@@ -314,6 +321,17 @@ function playerDamage(damage: number) {
   hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
 }
 
+function playerXP() {
+  if (player.exp > 100) {
+    player.exp -= 100;
+    player.level++;
+  }
+
+  expFull?.setAttribute('style', `width:  ${3.8 * player.exp + 1}px; `);
+  const level = document.querySelector('#level') as HTMLDivElement;
+  level.innerText = `${player.level}`;
+}
+
 //---------------------Calculations------------------------
 function indexToPixel(index: number) {
   return index * 64 + 32;
@@ -387,6 +405,7 @@ function towerAttack() {
       enemies[0].health -= tower.damage;
       if (enemies[0].health <= 0) {
         playerMoney += ENEMY_OPTIONS[enemies[0].type].money;
+        player.exp += ENEMY_OPTIONS[enemies[0].type].strength;
         enemies.splice(0, 1);
       }
     }
