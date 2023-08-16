@@ -1,4 +1,8 @@
+//------------------Imports-and-exports------------------
+
 import './style.css';
+
+//------------------declaration-of-types------------------
 
 type GameTile = {
   isPlayerTower: number | null;
@@ -13,30 +17,33 @@ type Enemy = {
   health: number;
   money: number;
 };
+
 /** @description position as Index */
 const path: {
   positionX: number;
   positionY: number;
 }[] = [];
+
 /** @description position as Pixel @description pathPosition as Index */
 const enemies: Enemy[] = [];
+
+//-----------------------Game-Infos-----------------------
 
 let interval: number;
 let towers = 0;
 let gameTicks = 0;
-//------------------------------
 const gameSizeX = 19;
 const gameSizeY = 11;
+const hearths20 = document.querySelector('.hearths20');
+hearths20?.setAttribute('style', `width:  162px; `);
 
-export const player = {
+//------------------------Objects-------------------------
+const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
   money: 100,
 };
-
-const hearths20 = document.querySelector('.hearths20');
-hearths20?.setAttribute('style', `width:  162px; `);
 
 const TURRETS = {
   turret: {
@@ -58,17 +65,20 @@ const ENEMY_OPTIONS = {
 
 const gameMap: GameTile[][] = [];
 
-//----------------------------
+//-------------------------Game---------------------------
+
 game();
+
+//--------------------Game-Functions-----------------------
 
 function game() {
   reset();
   createMap();
   createPath();
   renderMap();
-  interval = setInterval(gameLoop, 1000 / 48);
+  interval = setInterval(gameLoop, 1000 / 24);
 }
-//------------------------
+
 function reset() {
   player.health = 20;
   player.money = 100;
