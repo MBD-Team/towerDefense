@@ -198,3 +198,35 @@ font-size: 15px;
   background-image: url(/enemy/mc-enderman.png);
 }
 
+.placeTurrets{
+  height: 704px;
+  width: 320px;
+  border: 3px solid black;
+position: fixed;
+right: 15px;
+bottom: 36px;
+}
+
+dl{
+ font-size: 2rem;
+ color:white;
+/* background-color: #0000005d;  */
+margin-top: 0;
+}
+
+dd{
+  border-bottom: 3px solid rgba(0, 0, 0, 0.589);
+  margin:0;
+  padding: 2px;
+  align-items: center;
+}
+
+.shopItem{
+display: flex;
+align-items: center;
+cursor: pointer;
+}
+
+span{
+  padding-left: 8px;
+}

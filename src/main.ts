@@ -18,7 +18,7 @@ type Enemy = {
   speed: number;
 };
 
-type TurretTypes = 'tier1' | 'tier2';
+type TurretTypes = 'dispenser' | 'ironGolem';
 type Turret = {
   type: TurretTypes;
   cost: number;
@@ -59,11 +59,11 @@ const player = {
 };
 
 const TURRET_OPTIONS = {
-  tier1: {
+  dispenser: {
     cost: 50,
     damage: 1,
   },
-  tier2: {
+  ironGolem: {
     cost: 150,
     damage: 2.5,
   },
@@ -103,7 +103,7 @@ const ENEMY_OPTIONS = {
 };
 
 const gameMap: GameTile[][] = [];
-
+let selectedTurret: null | TurretTypes = null;
 //-------------------------Game---------------------------
 
 game();
@@ -114,6 +114,7 @@ function game() {
   createMap();
   createPath();
   renderMap();
+  renderShop();
   waveGeneration();
   interval = setInterval(gameLoop, 1000 / 24);
 }
@@ -158,7 +159,7 @@ function renderMap() {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.onclick = () => {
-        openOptionsMenu(x, y);
+        placeTower(x, y);
       };
       if (path.at(-1)?.positionX === x && path.at(-1)?.positionY === y) {
         tile.classList.add('playerBase');
@@ -397,18 +398,41 @@ function sellTower(xIndex: number, yIndex: number) {
   turrets.splice(turretIndex, 1);
   renderTurret();
 }
-function openOptionsMenu(x: number, y: number) {
-  const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
-  optionsMenu.show();
-  const menuOption1 = document.querySelector('#menuOption1') as HTMLDivElement;
-  menuOption1.onclick = () => {
-    optionsMenu.close();
-    placeTower(x, y, 'tier1');
+// function openOptionsMenu(x: number, y: number) {
+//   const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
+//   optionsMenu.show();
+//   const menuOption1 = document.querySelector('#menuOption1') as HTMLDivElement;
+//   menuOption1.onclick = () => {
+//     optionsMenu.close();
+//     placeTower(x, y, 'tier1');
+//   };
+//   const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
+//   menuOption2.onclick = () => {
+//     optionsMenu.close();
+//     placeTower(x, y, 'tier2');
+//   };
+// }
+
+function renderShop() {
+  const dispenser = document.querySelector('#dispenser') as HTMLElement;
+  const ironGolem = document.querySelector('#ironGolem') as HTMLElement;
+  const shopItem = document.querySelectorAll('.shopItem');
+  shopItem.forEach(a => {
+    a.setAttribute('style', 'background-color:#0000005d');
+  });
+  dispenser.onclick = () => {
+    shopItem.forEach(a => {
+      a.setAttribute('style', 'background-color:#0000005d');
+    });
+    selectedTurret = 'dispenser';
+    dispenser.setAttribute('style', 'background-color:red;');
   };
-  const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
-  menuOption2.onclick = () => {
-    optionsMenu.close();
-    placeTower(x, y, 'tier2');
+  ironGolem.onclick = () => {
+    shopItem.forEach(a => {
+      a.setAttribute('style', 'background-color:#0000005d');
+    });
+    selectedTurret = 'ironGolem';
+    ironGolem.setAttribute('style', 'background-color:red;');
   };
 }
 
@@ -429,20 +453,19 @@ function openTowerMenu(x: number, y: number) {
     sellTower(x, y);
   };
 }
-function placeTower(indexX: number, indexY: number, type: TurretTypes) {
-  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
+function placeTower(indexX: number, indexY: number) {
+  if (path.find(a => a.positionX === indexX && a.positionY === indexY) || selectedTurret === null) {
     return;
   }
-  if (playerMoney >= TURRET_OPTIONS[type].cost + 5 * turrets.length) {
+
+  if (playerMoney >= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length) {
     turrets.push({
-      ...TURRET_OPTIONS[type],
+      ...TURRET_OPTIONS[selectedTurret],
       posX: indexToPixel(indexX),
       posY: indexToPixel(indexY),
-      type: type,
+      type: selectedTurret,
     });
-    playerMoney -= TURRET_OPTIONS[type].cost + 5 * turrets.length;
-    turrets.length += 1;
-    console.log(turrets);
+    playerMoney -= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length;
   }
   renderTurret();
 }
