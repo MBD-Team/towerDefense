@@ -44,6 +44,8 @@ const gameSizeY = 11;
 let waveCount = 0;
 const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
+const expFull = document.querySelector('.expFull');
+expFull?.setAttribute('style', `width:  162px; `);
 let playerMoney = 100;
 // let copper = 0;
 // let iron = 0;
@@ -56,6 +58,8 @@ const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
+  exp: 0,
+  level: 1,
 };
 
 const TURRET_OPTIONS = {
@@ -132,6 +136,7 @@ function gameLoop() {
   checkMoney();
   gameTicks++;
   if (gameTicks % 24 === 0) {
+    console.log(turrets.length);
     towerAttack();
   }
 
@@ -141,6 +146,7 @@ function gameLoop() {
   checkWinLose();
   enemyMove();
   renderAll();
+  playerXP(0);
 }
 
 //-----------------------Renders---------------------------
@@ -313,6 +319,15 @@ function playerDamage(damage: number) {
   hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
 }
 
+function playerXP(xpAmount: number) {
+  player.exp += xpAmount;
+  // player.level = Math.floor(player.exp / 100);
+  // expFull?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
+
+  const level = document.querySelector('#level') as HTMLDivElement;
+  level.innerText = `${player.level}`;
+}
+
 //---------------------Calculations------------------------
 function indexToPixel(index: number) {
   return index * 64 + 32;
@@ -382,10 +397,13 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
 //-------------------Tower-functions-----------------------
 function towerAttack() {
   for (const tower of turrets) {
+    console.log('test', turrets.length);
     if (enemies.length) {
+      console.log(tower);
       enemies[0].health -= tower.damage;
       if (enemies[0].health <= 0) {
         playerMoney += ENEMY_OPTIONS[enemies[0].type].money;
+        playerXP(ENEMY_OPTIONS[enemies[0].type].strength);
         enemies.splice(0, 1);
       }
     }
@@ -431,6 +449,7 @@ function openTowerMenu(x: number, y: number) {
 }
 function placeTower(indexX: number, indexY: number, type: TurretTypes) {
   if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
+    renderTurret();
     return;
   }
   if (playerMoney >= TURRET_OPTIONS[type].cost + 5 * turrets.length) {
@@ -442,7 +461,6 @@ function placeTower(indexX: number, indexY: number, type: TurretTypes) {
     });
     playerMoney -= TURRET_OPTIONS[type].cost + 5 * turrets.length;
     turrets.length += 1;
-    console.log(turrets);
   }
   renderTurret();
 }

@@ -7,43 +7,51 @@
     <title>Tower Defense</title>
   </head>
   <body>
+    <div style="margin-bottom: 10px">
+      <div>
+        <img class="hearths20" src="/mc-20-Hearths.png" alt="Health 20" />
+        <img class="health0" src="/mc-0-Health.png" alt="Health 0" />
+      </div>
+    </div>
     <div>
-      <!-- <img class="health20" src="/mc-20-Health.png" alt="Health 20" /> -->
-      <img class="hearths20" src="/mc-20-Hearths.png" alt="Health 20" />
-      <img class="health0" src="/mc-0-Health.png" alt="Health 0" />
+      <img class="expFull" src="/mc-EXP-full.png" alt="EXP-full" />
+      <img class="expEmpty" src="/mc-EXP-empty.png" alt="EXP-empty" />
+      <p id="level"></p>
     </div>
-    <div class="moneylist">
-      <div class="moneyInv">
-        <img class="moneyImg" src="/mc-netherite.png" alt="netherite" />
+    <div style="margin-bottom: -40px">
+      <div class="moneylist">
+        <div class="moneyInv">
+          <img class="moneyImg" src="/mc-netherite.png" alt="netherite" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="/mc-diamond-ingot.png" alt="diamond" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="/mc-gold.png" alt="gold" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="/mc-iron.png" alt="iron" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="/mc-copper.png" alt="copper" />
+        </div>
       </div>
-      <div class="moneyInv">
-        <img class="moneyImg" src="/mc-diamond-ingot.png" alt="diamond" />
-      </div>
-      <div class="moneyInv">
-        <img class="moneyImg" src="/mc-gold.png" alt="gold" />
-      </div>
-      <div class="moneyInv">
-        <img class="moneyImg" src="/mc-iron.png" alt="iron" />
-      </div>
-      <div class="moneyInv">
-        <img class="moneyImg" src="/mc-copper.png" alt="copper" />
-      </div>
-    </div>
-    <div class="moneyNumber">
-      <div class="moneyInv">
-        <p id="netherite"></p>
-      </div>
-      <div class="moneyInv">
-        <p id="diamond"></p>
-      </div>
-      <div class="moneyInv">
-        <p id="gold"></p>
-      </div>
-      <div class="moneyInv">
-        <p id="iron"></p>
-      </div>
-      <div class="moneyInv">
-        <p id="copper"></p>
+      <div class="moneyNumber">
+        <div class="moneyInv">
+          <p id="netherite"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="diamond"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="gold"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="iron"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="copper"></p>
+        </div>
       </div>
     </div>
 
@@ -60,14 +68,15 @@
         <div class="optionObject" id="menuOption2">
           <p>Tier II Dispenser</p>
         </div>
+      </div>
     </dialog>
 
     <dialog class="towerMenu">
       <div class="towerMenuStyles">
-      <div class="towerMenuObject" id="towerObject1">Upgrade Tower</div>
-      <div class="towerMenuObject" id="towerObject2">Target</div>
-      <div class="towerMenuObject" id="towerObject3">Sell Tower</div>
-    </div>
+        <div class="towerMenuObject" id="towerObject1">Upgrade Tower</div>
+        <div class="towerMenuObject" id="towerObject2">Target</div>
+        <div class="towerMenuObject" id="towerObject3">Sell Tower</div>
+      </div>
     </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
