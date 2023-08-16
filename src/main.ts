@@ -37,7 +37,7 @@ const turrets: Turret[] = [];
 let interval: number;
 
 //-----------------------Game-Infos---------------------
-let towers = 0;
+
 let gameTicks = 0;
 const gameSizeX = 19;
 const gameSizeY = 11;
@@ -138,22 +138,20 @@ function gameLoop() {
 }
 function placeTower(indexX: number, indexY: number, type: TurretTypes) {
   if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
-    console.log('didnt work');
     return;
   }
-  if (player.money >= TURRET_OPTIONS[type].cost + 5 * towers) {
+  if (player.money >= TURRET_OPTIONS[type].cost + 5 * turrets.length) {
     turrets.push({
       ...TURRET_OPTIONS[type],
       posX: indexToPixel(indexX),
       posY: indexToPixel(indexY),
       type: type,
     });
-    player.money -= TURRET_OPTIONS[type].cost + 5 * towers;
-    towers += 1;
+    player.money -= TURRET_OPTIONS[type].cost + 5 * turrets.length;
+    turrets.length += 1;
     console.log(turrets);
   }
   renderTurret();
-  console.log('render turret');
 }
 //-----------------------Renders---------------------------
 function renderAll() {
@@ -197,6 +195,9 @@ function renderTurret() {
   for (const tower of turrets) {
     const turretDiv = document.createElement('div');
     turretDiv.className = 'turret';
+    turretDiv.onclick = () => {
+      openTowerMenu(pixelToIndex(tower.posX), pixelToIndex(tower.posY));
+    };
     turretDiv.setAttribute('style', `top:${tower.posY}px; left:${tower.posX}px`);
     const gameField = document.querySelector('.field');
     gameField?.appendChild(turretDiv);
@@ -382,11 +383,10 @@ function towerAttack() {
   }
 }
 function sellTower(xIndex: number, yIndex: number) {
-  turrets.splice(xIndex && yIndex, 1);
-  player.money += 30;
-  towers -= 1;
+  const turretIndex = turrets.findIndex(a => pixelToIndex(a.posX) === xIndex && pixelToIndex(a.posY) === yIndex);
+  player.money += TURRET_OPTIONS[turrets[turretIndex].type].cost * 0.7;
+  turrets.splice(turretIndex, 1);
   renderTurret();
-  console.log('sell Tower');
 }
 function openOptionsMenu(x: number, y: number) {
   const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
@@ -401,13 +401,25 @@ function openOptionsMenu(x: number, y: number) {
     optionsMenu.close();
     placeTower(x, y, 'tier2');
   };
-  const menuOption3 = document.querySelector('#menuOption3') as HTMLDivElement;
-  menuOption3.onclick = () => {
-    optionsMenu.close();
+}
+
+function openTowerMenu(x: number, y: number) {
+  const towerMenu = document.querySelector('.towerMenu') as HTMLDialogElement;
+  towerMenu.show();
+  const towerMenuObject1 = document.querySelector('#towerObject1') as HTMLDivElement;
+  towerMenuObject1.onclick = () => {
+    towerMenu.close();
+  };
+  const towerMenuObject2 = document.querySelector('#towerObject2') as HTMLDivElement;
+  towerMenuObject2.onclick = () => {
+    towerMenu.close();
+  };
+  const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLDivElement;
+  towerMenuObject3.onclick = () => {
+    towerMenu.close();
     sellTower(x, y);
   };
 }
-
 //-------------------Type-Script-Bullshit-----------------------
 declare global {
   interface Window {

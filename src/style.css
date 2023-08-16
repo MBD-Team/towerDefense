@@ -140,3 +140,27 @@ flex-direction: column;
   width: 64px;
   padding: 5px;
 }
+
+.towerMenuStyles{
+  display: flex;
+justify-content: space-between;
+flex-direction: column;
+}
+
+.towerMenuObject{
+  background-color: var(--primary-color);
+  box-sizing: border-box;
+  font-size: 2rem;
+  padding: 6px;
+}
+
+.towerMenuObject:hover{
+  background-color: #80914b;
+}
+
+
+.towerMenu{
+  margin-left: 18vh;
+  background-color: var(--primary-color);
+  padding:0;
+}
