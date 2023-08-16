@@ -130,7 +130,6 @@ flex-direction: column;
   width: 64px;
   padding: 5px;
 }
-<<<<<<< HEAD
 
 .towerMenuStyles{
   display: flex;
@@ -155,7 +154,6 @@ flex-direction: column;
   background-color: var(--primary-color);
   padding:0;
 }
-=======
 .moneyNumber{
 color: white;
 transform: translate(55px,-50px);
@@ -200,4 +198,3 @@ font-size: 15px;
   background-image: url(/enemy/mc-enderman.png);
 }
 
->>>>>>> 44efa86ed2136cd26b30dd88078818650d8d5626
