@@ -6,7 +6,7 @@ type GameTile = {
 };
 
 type Enemy = {
-  type: keyof typeof ENEMYOPTIONS;
+  type: keyof typeof ENEMY_OPTIONS;
   pathPosition: number;
   posX: number;
   posY: number;
@@ -39,13 +39,13 @@ const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
 
 const TURRETS = {
-  1: {
+  turret: {
     cost: 20,
     damage: 1,
   },
 };
 
-const ENEMYOPTIONS = {
+const ENEMY_OPTIONS = {
   zombie: {
     health: 5,
     money: 10,
@@ -78,7 +78,7 @@ function gameLoop() {
     spawnEnemy();
   }
 
-  CheckWinLose();
+  checkWinLose();
   enemyMove();
   renderAll();
 }
@@ -92,17 +92,20 @@ function renderPlayerStats() {
   money.innerText = `Money = ${player.money}`;
 }
 
-function CheckWinLose() {
-  if (player.health <= 0) {
+function checkWinLose() {
+  if (player.health < 1) {
     clearInterval(interval);
     const deathText = document.querySelector('.death') as HTMLDialogElement;
     deathText.showModal();
+    console.log('player is dead');
   }
 }
 
-function playerDamage(Damage: number) {
-  player.health -= Damage;
+function playerDamage(damage: number) {
+  player.health -= damage;
   hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
+  console.log(player.health);
+  console.log('test');
 }
 
 function renderMap() {
@@ -146,16 +149,16 @@ function renderEnemy() {
     gameField?.appendChild(enemyDiv);
   }
 }
-function tileClick(IndexX: number, IndexY: number) {
-  if (path.find(a => a.positionX === IndexX && a.positionY === IndexY)) {
+function tileClick(indexX: number, indexY: number) {
+  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
     return;
   }
-  if (gameMap[IndexX][IndexY].isPlayerTower == null && player.money >= 50 + 5 * towers) {
-    gameMap[IndexX][IndexY].isPlayerTower = 1;
+  if (gameMap[indexX][indexY].isPlayerTower == null && player.money >= 50 + 5 * towers) {
+    gameMap[indexX][indexY].isPlayerTower = 1;
     player.money -= 50 + 5 * towers;
     towers += 1;
   } else {
-    gameMap[IndexX][IndexY].isPlayerTower = null;
+    gameMap[indexX][indexY].isPlayerTower = null;
   }
   renderMap();
 }
@@ -205,7 +208,7 @@ function createMap() {
 
 function towerAttack() {
   for (const tower of gameMap.flat().filter(a => a.isPlayerTower)) {
-    enemies[0].health -= TURRETS[1].damage;
+    enemies[0].health -= TURRETS.turret.damage;
     enemyDeath(); // FIXME: checking if all enemies are dead if only the first one got shot (performance)
   }
 }
@@ -214,10 +217,10 @@ function enemyDeath() {
   for (let i = 0; i < enemies.length; i++) {
     if (enemies[i].health <= 0) {
       if (enemies[i].type === 'zombie') {
-        player.money += ENEMYOPTIONS.zombie.money;
+        player.money += ENEMY_OPTIONS.zombie.money;
       }
       if (enemies[i].type === 'spider') {
-        player.money += ENEMYOPTIONS.spider.money;
+        player.money += ENEMY_OPTIONS.spider.money;
       }
       enemies.splice(i, 1);
     }
@@ -226,7 +229,7 @@ function enemyDeath() {
 //-----------------------------
 function spawnEnemy() {
   enemies.push({
-    ...ENEMYOPTIONS.zombie,
+    ...ENEMY_OPTIONS.zombie,
     pathPosition: 0,
     posX: indexToPixel(path[0].positionX),
     posY: indexToPixel(path[0].positionY),
