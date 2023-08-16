@@ -60,14 +60,23 @@ const gameMap: GameTile[][] = [];
 
 //----------------------------
 game();
+
 function game() {
-  player.health = 20;
+  reset();
   createMap();
   createPath();
   renderMap();
   interval = setInterval(gameLoop, 1000 / 48);
 }
 //------------------------
+function reset() {
+  player.health = 20;
+  player.money = 100;
+  playerDamage(0);
+  path.splice(0);
+  gameMap.splice(0);
+  enemies.splice(0);
+}
 function gameLoop() {
   gameTicks++;
   if (gameTicks % 24 === 0) {
@@ -104,8 +113,6 @@ function checkWinLose() {
 function playerDamage(damage: number) {
   player.health -= damage;
   hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
-  console.log(player.health);
-  console.log('test');
 }
 
 function renderMap() {
@@ -279,10 +286,11 @@ function createPath() {
   let pathY = gameSizeY - 1;
   let pathX = Math.floor(Math.random() * gameSizeX) + 1;
   while (pathY > 0) {
+    console.log('while pathy');
     const direction = Math.floor(Math.random() * 100) + 1;
     //---------------------
     if (gameMap[pathX - 1] && gameMap[pathX - 1][pathY]) {
-      if (direction < 45) {
+      if (direction < 47) {
         if (!path.find(field => field.positionX === pathX - 1 && field.positionY === pathY)) {
           if (countPathConnected(pathX - 1, pathY) < 2) {
             pathX = pathX - 1;
@@ -294,7 +302,7 @@ function createPath() {
     }
 
     if (gameMap[pathX + 1] && gameMap[pathX + 1][pathY]) {
-      if (direction < 90 && direction >= 45) {
+      if (direction < 94 && direction >= 47) {
         if (!path.find(field => field.positionX === pathX + 1 && field.positionY === pathY)) {
           if (countPathConnected(pathX + 1, pathY) < 2) {
             pathX = pathX + 1;
@@ -305,7 +313,7 @@ function createPath() {
       }
     }
     if (gameMap[pathX] && gameMap[pathX][pathY - 1]) {
-      if (direction >= 90) {
+      if (direction >= 94) {
         if (!path.find(field => field.positionX === pathX && field.positionY === pathY - 1)) {
           if (countPathConnected(pathX, pathY - 1) < 2) {
             pathY -= 1;
