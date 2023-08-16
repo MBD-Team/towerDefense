@@ -1,7 +1,6 @@
 import './style.css';
 
 type GameTile = {
-  isPlayerTower: number | null;
   isEmpty: boolean;
 };
 type EnemyTypes = 'zombie' | 'skeleton' | 'spider' | 'enderman' | 'bat';
@@ -13,6 +12,15 @@ type Enemy = {
   health: number;
   money: number;
 };
+
+type TurretTypes = 'Tier I' | 'Tier II';
+type Turret = {
+  type: TurretTypes;
+  cost: number;
+  damage: number;
+  posX: number;
+  posY: number;
+};
 /** @description position as Index */
 const path: {
   positionX: number;
@@ -20,7 +28,7 @@ const path: {
 }[] = [];
 /** @description position as Pixel @description pathPosition as Index */
 const enemies: Enemy[] = [];
-
+const turrets: Turret[] = [];
 let interval: number;
 let towers = 0;
 let gameTicks = 0;
@@ -36,10 +44,14 @@ const player = {
   health: 20,
   money: 100,
 };
-const TURRETS = {
-  1: {
-    cost: 20,
+const TURRET_OPTIONS = {
+  'Tier I': {
+    cost: 50,
     damage: 1,
+  },
+  'Tier II': {
+    cost: 150,
+    damage: 2.5,
   },
 };
 
@@ -70,10 +82,6 @@ const ENEMY_OPTIONS = {
     strength: 1,
   },
 };
-const enemyBase = {
-  positionY: gameSizeY - 1,
-  positionX: Math.floor(gameSizeX / 2),
-};
 
 const gameMap: GameTile[][] = [];
 
@@ -84,6 +92,7 @@ function game() {
   createMap();
   createPath();
   renderMap();
+  waveGeneration();
   interval = setInterval(gameLoop, 1000 / 24);
 }
 //------------------------
@@ -93,7 +102,7 @@ function gameLoop() {
     towerAttack();
   }
 
-  if ((gameTicks % 24) * 30 === 0) {
+  if (gameTicks % (24 * 30) === 0) {
     waveGeneration();
   }
 
@@ -142,9 +151,6 @@ function renderMap() {
       tile.onclick = () => {
         openOptionsMenu(x, y);
       };
-      if (gameMap[x][y].isPlayerTower) {
-        tile.classList.add('tower');
-      }
       if (path.at(-1)?.positionX === x && path.at(-1)?.positionY === y) {
         tile.classList.add('playerBase');
       }
@@ -158,6 +164,20 @@ function renderMap() {
     }
   }
 }
+
+function renderTurret() {
+  document.querySelectorAll('.turret').forEach(a => {
+    a.remove();
+  });
+  for (const tower of turrets) {
+    const turretDiv = document.createElement('div');
+    turretDiv.className = 'turret';
+    turretDiv.setAttribute('style', `top:${tower.posY}px; left:${tower.posX}px`);
+    const gameField = document.querySelector('.field');
+    gameField?.appendChild(turretDiv);
+  }
+}
+
 function renderEnemy() {
   document.querySelectorAll('.enemy').forEach(a => {
     a.remove();
@@ -170,18 +190,24 @@ function renderEnemy() {
     gameField?.appendChild(enemyDiv);
   }
 }
-function tileClick(IndexX: number, IndexY: number) {
-  if (path.find(a => a.positionX === IndexX && a.positionY === IndexY)) {
+function tileClick(indexX: number, indexY: number, type: TurretTypes) {
+  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
+    console.log('didnt work');
     return;
   }
-  if (gameMap[IndexX][IndexY].isPlayerTower == null && player.money >= 50 + 5 * towers) {
-    gameMap[IndexX][IndexY].isPlayerTower = 1;
-    player.money -= 50 + 5 * towers;
+  if (player.money >= TURRET_OPTIONS[type].cost + 5 * towers) {
+    turrets.push({
+      ...TURRET_OPTIONS[type],
+      posX: indexToPixel(indexX),
+      posY: indexToPixel(indexY),
+      type: type,
+    });
+    player.money -= TURRET_OPTIONS[type].cost + 5 * towers;
     towers += 1;
-  } else {
-    gameMap[IndexX][IndexY].isPlayerTower = null;
+    console.log(turrets);
   }
-  renderMap();
+  renderTurret();
+  console.log('render turret');
 }
 function indexToPixel(index: number) {
   return index * 64 + 32;
@@ -207,7 +233,7 @@ function enemyMove() {
       enemy.posY = indexToPixel(path[0].positionY);
       enemy.pathPosition = 0;
       playerDamage(1);
-      enemyDeath();
+      enemies.splice(0, 1);
     }
   }
 }
@@ -217,7 +243,6 @@ function createMap() {
     const gameRow: GameTile[] = [];
     for (let y = 0; y < gameSizeY; y++) {
       const tile: GameTile = {
-        isPlayerTower: null,
         isEmpty: true,
       };
       gameRow.push(tile);
@@ -227,24 +252,18 @@ function createMap() {
 }
 
 function towerAttack() {
-  for (const tower of gameMap.flat().filter(a => a.isPlayerTower)) {
-    enemies[0].health -= TURRETS[1].damage;
-    enemyDeath(); // FIXME: checking if all enemies are dead while only the first one got shot (performance problems maybe)
+  if (!enemies.length) {
+    return;
   }
-}
-
-function enemyDeath() {
-  for (let i = 0; i < enemies.length; i++) {
-    if (enemies[i].health <= 0) {
-      if (enemies[i].type === 'zombie') {
-        player.money += ENEMY_OPTIONS.zombie.money;
-      }
-      if (enemies[i].type === 'spider') {
-        player.money += ENEMY_OPTIONS.spider.money;
-      }
+  for (const tower of turrets) {
+    enemies[0].health -= tower.damage;
+    if (enemies[0].health <= 0) {
+      player.money += ENEMY_OPTIONS[enemies[0].type].money;
+      enemies.splice(0, 1);
     }
   }
 }
+
 function waveGeneration() {
   waveCount++;
   let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
@@ -275,26 +294,28 @@ function spawnEnemy(type: EnemyTypes) {
   return ENEMY_OPTIONS[type].strength;
 }
 
-function sellTower(x: number, y: number) {
-  if (gameMap[x][y].isPlayerTower !== null) {
-    gameMap[x][y].isPlayerTower = null;
-    player.money += 30;
-    towers -= 1;
-    renderMap();
-  }
+function sellTower(xIndex: number, yIndex: number) {
+  turrets.splice(xIndex && yIndex, 1);
+  player.money += 30;
+  towers -= 1;
+  renderTurret();
+  console.log('sell Tower');
 }
+
 function openOptionsMenu(x: number, y: number) {
   const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
   optionsMenu.show();
   const menuOption1 = document.querySelector('#menuOption1') as HTMLDivElement;
   menuOption1.onclick = () => {
     optionsMenu.close();
-    tileClick(x, y);
+    console.log('close Tier I');
+    tileClick(x, y, 'Tier I');
   };
   const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
   menuOption2.onclick = () => {
     optionsMenu.close();
-    tileClick(x, y);
+    console.log('close Tier II');
+    tileClick(x, y, 'Tier II');
   };
   const menuOption3 = document.querySelector('#menuOption3') as HTMLDivElement;
   menuOption3.onclick = () => {
@@ -305,13 +326,10 @@ function openOptionsMenu(x: number, y: number) {
 declare global {
   interface Window {
     game: () => void;
-    openOptionsMenu: (x: number, y: number) => void;
-    tileClick: (IndexX: number, IndexY: number) => void;
   }
 }
 window.game = game;
-window.openOptionsMenu = openOptionsMenu;
-window.tileClick = tileClick;
+
 //-----------------
 function createPath() {
   let pathY = gameSizeY - 1;

@@ -105,3 +105,12 @@ flex-direction: column;
   width:  174px;
   height: 30px;
 }
+
+.turret{
+  width:64px;
+  height:64px;
+  background-image: url(/mc-dispender.png);
+  object-fit: cover;
+  position: absolute;
+  transform: translate(-50%,-50%);
+}
