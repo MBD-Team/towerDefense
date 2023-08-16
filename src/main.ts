@@ -88,8 +88,6 @@ function renderAll() {
   renderEnemy();
 }
 function renderPlayerStats() {
-  const health = document.querySelector('.health') as HTMLDivElement;
-  health.innerText = `Player Health = ${player.health}`;
   const money = document.querySelector('.money') as HTMLDivElement;
   money.innerText = `Money = ${player.money}`;
 }
