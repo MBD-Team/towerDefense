@@ -142,23 +142,7 @@ function gameLoop() {
   enemyMove();
   renderAll();
 }
-function placeTower(indexX: number, indexY: number, type: TurretTypes) {
-  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
-    return;
-  }
-  if (playerMoney >= TURRET_OPTIONS[type].cost + 5 * turrets.length) {
-    turrets.push({
-      ...TURRET_OPTIONS[type],
-      posX: indexToPixel(indexX),
-      posY: indexToPixel(indexY),
-      type: type,
-    });
-    playerMoney -= TURRET_OPTIONS[type].cost + 5 * turrets.length;
-    turrets.length += 1;
-    console.log(turrets);
-  }
-  renderTurret();
-}
+
 //-----------------------Renders---------------------------
 function renderAll() {
   renderEnemy();
@@ -449,15 +433,16 @@ function placeTower(indexX: number, indexY: number, type: TurretTypes) {
   if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
     return;
   }
-  if (playerMoney >= TURRET_OPTIONS[type].cost + 5 * towers) {
+  if (playerMoney >= TURRET_OPTIONS[type].cost + 5 * turrets.length) {
     turrets.push({
       ...TURRET_OPTIONS[type],
       posX: indexToPixel(indexX),
       posY: indexToPixel(indexY),
       type: type,
     });
-    playerMoney -= TURRET_OPTIONS[type].cost + 5 * towers;
-    towers += 1;
+    playerMoney -= TURRET_OPTIONS[type].cost + 5 * turrets.length;
+    turrets.length += 1;
+    console.log(turrets);
   }
   renderTurret();
 }
