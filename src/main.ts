@@ -1,4 +1,8 @@
+//------------------Imports-and-exports------------------
+
 import './style.css';
+
+//------------------declaration-of-types------------------
 
 type GameTile = {
   isEmpty: boolean;
@@ -13,7 +17,7 @@ type Enemy = {
   money: number;
 };
 
-type TurretTypes = 'Tier I' | 'Tier II';
+type TurretTypes = 'tier1' | 'tier2';
 type Turret = {
   type: TurretTypes;
   cost: number;
@@ -32,10 +36,9 @@ const turrets: Turret[] = [];
 let interval: number;
 let towers = 0;
 let gameTicks = 0;
-//------------------------------
+//-----------------------Game-Infos---------------------
 const gameSizeX = 19;
 const gameSizeY = 11;
-
 let waveCount = 0;
 
 const player = {
@@ -49,11 +52,11 @@ const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
 
 const TURRET_OPTIONS = {
-  'Tier I': {
+  tier1: {
     cost: 50,
     damage: 1,
   },
-  'Tier II': {
+  tier2: {
     cost: 150,
     damage: 2.5,
   },
@@ -110,7 +113,7 @@ function gameLoop() {
     waveGeneration();
   }
 
-  CheckWinLose();
+  checkWinLose();
   enemyMove();
   renderAll();
 }
@@ -120,13 +123,11 @@ function renderAll() {
   renderEnemy();
 }
 function renderPlayerStats() {
-  const health = document.querySelector('.health') as HTMLDivElement;
-  health.innerText = `Player Health = ${player.health}`;
   const money = document.querySelector('.money') as HTMLDivElement;
   money.innerText = `Money = ${player.money}`;
 }
 
-function CheckWinLose() {
+function checkWinLose() {
   if (player.health <= 0) {
     clearInterval(interval);
     const deathText = document.querySelector('.death') as HTMLDialogElement;
@@ -134,8 +135,8 @@ function CheckWinLose() {
   }
 }
 
-function playerDamage(Damage: number) {
-  player.health -= Damage;
+function playerDamage(damage: number) {
+  player.health -= damage;
   hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
 }
 
@@ -310,13 +311,13 @@ function openOptionsMenu(x: number, y: number) {
   menuOption1.onclick = () => {
     optionsMenu.close();
     console.log('close Tier I');
-    tileClick(x, y, 'Tier I');
+    tileClick(x, y, 'tier1');
   };
   const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
   menuOption2.onclick = () => {
     optionsMenu.close();
     console.log('close Tier II');
-    tileClick(x, y, 'Tier II');
+    tileClick(x, y, 'tier2');
   };
   const menuOption3 = document.querySelector('#menuOption3') as HTMLDivElement;
   menuOption3.onclick = () => {
