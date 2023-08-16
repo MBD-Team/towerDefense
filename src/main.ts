@@ -34,22 +34,23 @@ const path: {
 const enemies: Enemy[] = [];
 const turrets: Turret[] = [];
 let interval: number;
+
+//-----------------------Game-Infos---------------------
 let towers = 0;
 let gameTicks = 0;
-//-----------------------Game-Infos---------------------
 const gameSizeX = 19;
 const gameSizeY = 11;
 let waveCount = 0;
+const hearths20 = document.querySelector('.hearths20');
+hearths20?.setAttribute('style', `width:  162px; `);
 
+//------------------------Objects-------------------------
 const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
   money: 100,
 };
-
-const hearths20 = document.querySelector('.hearths20');
-hearths20?.setAttribute('style', `width:  162px; `);
 
 const TURRET_OPTIONS = {
   tier1: {
@@ -92,17 +93,28 @@ const ENEMY_OPTIONS = {
 
 const gameMap: GameTile[][] = [];
 
-//----------------------------
+//-------------------------Game---------------------------
+
 game();
+
+//--------------------Game-Functions-----------------------
 function game() {
-  player.health = 20;
+  reset();
   createMap();
   createPath();
   renderMap();
   waveGeneration();
   interval = setInterval(gameLoop, 1000 / 24);
 }
-//------------------------
+
+function reset() {
+  player.health = 20;
+  player.money = 100;
+  playerDamage(0);
+  path.splice(0);
+  gameMap.splice(0);
+  enemies.splice(0);
+}
 function gameLoop() {
   gameTicks++;
   if (gameTicks % 24 === 0) {
@@ -117,7 +129,26 @@ function gameLoop() {
   enemyMove();
   renderAll();
 }
-
+function tileClick(indexX: number, indexY: number, type: TurretTypes) {
+  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
+    console.log('didnt work');
+    return;
+  }
+  if (player.money >= TURRET_OPTIONS[type].cost + 5 * towers) {
+    turrets.push({
+      ...TURRET_OPTIONS[type],
+      posX: indexToPixel(indexX),
+      posY: indexToPixel(indexY),
+      type: type,
+    });
+    player.money -= TURRET_OPTIONS[type].cost + 5 * towers;
+    towers += 1;
+    console.log(turrets);
+  }
+  renderTurret();
+  console.log('render turret');
+}
+//-----------------------Renders---------------------------
 function renderAll() {
   renderPlayerStats();
   renderEnemy();
@@ -126,20 +157,6 @@ function renderPlayerStats() {
   const money = document.querySelector('.money') as HTMLDivElement;
   money.innerText = `Money = ${player.money}`;
 }
-
-function checkWinLose() {
-  if (player.health <= 0) {
-    clearInterval(interval);
-    const deathText = document.querySelector('.death') as HTMLDialogElement;
-    deathText.showModal();
-  }
-}
-
-function playerDamage(damage: number) {
-  player.health -= damage;
-  hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
-}
-
 function renderMap() {
   const gameField = document.querySelector('.field');
   if (gameField !== null) {
@@ -166,7 +183,6 @@ function renderMap() {
     }
   }
 }
-
 function renderTurret() {
   document.querySelectorAll('.turret').forEach(a => {
     a.remove();
@@ -179,7 +195,6 @@ function renderTurret() {
     gameField?.appendChild(turretDiv);
   }
 }
-
 function renderEnemy() {
   document.querySelectorAll('.enemy').forEach(a => {
     a.remove();
@@ -192,54 +207,7 @@ function renderEnemy() {
     gameField?.appendChild(enemyDiv);
   }
 }
-function tileClick(indexX: number, indexY: number, type: TurretTypes) {
-  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
-    console.log('didnt work');
-    return;
-  }
-  if (player.money >= TURRET_OPTIONS[type].cost + 5 * towers) {
-    turrets.push({
-      ...TURRET_OPTIONS[type],
-      posX: indexToPixel(indexX),
-      posY: indexToPixel(indexY),
-      type: type,
-    });
-    player.money -= TURRET_OPTIONS[type].cost + 5 * towers;
-    towers += 1;
-    console.log(turrets);
-  }
-  renderTurret();
-  console.log('render turret');
-}
-function indexToPixel(index: number) {
-  return index * 64 + 32;
-}
-function pixelToIndex(index: number) {
-  return (index - 32) / 64;
-}
-function enemyMove() {
-  for (const enemy of enemies) {
-    if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
-      enemy.pathPosition++;
-    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
-      enemy.posX -= 4;
-    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
-      enemy.posX += 4;
-    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
-      enemy.posY -= 4;
-    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
-      enemy.posY += 4;
-    }
-    if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
-      enemy.posX = indexToPixel(path[0].positionX);
-      enemy.posY = indexToPixel(path[0].positionY);
-      enemy.pathPosition = 0;
-      playerDamage(1);
-      enemies.splice(0, 1);
-    }
-  }
-}
-
+//------------------------Create---------------------------
 function createMap() {
   for (let x = 0; x < gameSizeX; x++) {
     const gameRow: GameTile[] = [];
@@ -378,7 +346,6 @@ function createPath() {
     createPath();
   }
 }
-
 function countPathConnected(x: number, y: number) {
   let numberOfConnectedPaths = 0;
   if (path.find(field => field.positionX === x + 1 && field.positionY === y)) {
@@ -396,3 +363,123 @@ function countPathConnected(x: number, y: number) {
 
   return numberOfConnectedPaths;
 }
+//------------------------Checks---------------------------
+function checkWinLose() {
+  if (player.health <= 0) {
+    clearInterval(interval);
+    const deathText = document.querySelector('.death') as HTMLDialogElement;
+    deathText.showModal();
+  }
+}
+function playerDamage(damage: number) {
+  player.health -= damage;
+  hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
+}
+//---------------------Calculations------------------------
+function indexToPixel(index: number) {
+  return index * 64 + 32;
+}
+function pixelToIndex(index: number) {
+  return (index - 32) / 64;
+}
+//-------------------Enemy-functions-----------------------
+function enemyMove() {
+  for (const enemy of enemies) {
+    if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
+      enemy.pathPosition++;
+    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
+      enemy.posX -= 4;
+    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
+      enemy.posX += 4;
+    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
+      enemy.posY -= 4;
+    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
+      enemy.posY += 4;
+    }
+    if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
+      enemy.posX = indexToPixel(path[0].positionX);
+      enemy.posY = indexToPixel(path[0].positionY);
+      enemy.pathPosition = 0;
+      playerDamage(1);
+      enemies.splice(0, 1);
+    }
+  }
+}
+function waveGeneration() {
+  waveCount++;
+  let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
+  while (waveStrength > 0) {
+    const random = Math.random() * 100;
+    if (random <= 5) {
+      waveStrength -= spawnEnemy('enderman');
+    } else if (random <= 50 && random > 5) {
+      waveStrength -= spawnEnemy('zombie');
+    } else if (random <= 70 && random > 50) {
+      waveStrength -= spawnEnemy('skeleton');
+    } else if (random <= 85 && random > 70) {
+      waveStrength -= spawnEnemy('bat');
+    } else {
+      waveStrength -= spawnEnemy('spider');
+    }
+  }
+}
+function spawnEnemy(type: EnemyTypes) {
+  enemies.push({
+    ...ENEMY_OPTIONS[type],
+    pathPosition: 0,
+    posX: indexToPixel(path[0].positionX),
+    posY: indexToPixel(path[0].positionY),
+    type: type,
+  });
+  return ENEMY_OPTIONS[type].strength;
+}
+//-------------------Tower-functions-----------------------
+function towerAttack() {
+  if (!enemies.length) {
+    return;
+  }
+  for (const tower of turrets) {
+    enemies[0].health -= tower.damage;
+    if (enemies[0].health <= 0) {
+      player.money += ENEMY_OPTIONS[enemies[0].type].money;
+      enemies.splice(0, 1);
+    }
+  }
+}
+function sellTower(xIndex: number, yIndex: number) {
+  turrets.splice(xIndex && yIndex, 1);
+  player.money += 30;
+  towers -= 1;
+  renderTurret();
+  console.log('sell Tower');
+}
+function openOptionsMenu(x: number, y: number) {
+  const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
+  optionsMenu.show();
+  const menuOption1 = document.querySelector('#menuOption1') as HTMLDivElement;
+  menuOption1.onclick = () => {
+    optionsMenu.close();
+    console.log('close Tier I');
+    tileClick(x, y, 'tier1');
+  };
+  const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
+  menuOption2.onclick = () => {
+    optionsMenu.close();
+    console.log('close Tier II');
+    tileClick(x, y, 'tier2');
+  };
+  const menuOption3 = document.querySelector('#menuOption3') as HTMLDivElement;
+  menuOption3.onclick = () => {
+    optionsMenu.close();
+    sellTower(x, y);
+  };
+  renderMap();
+}
+
+//-------------------Type-Script-Bullshit-----------------------
+declare global {
+  interface Window {
+    game: () => void;
+  }
+}
+window.game = game;
