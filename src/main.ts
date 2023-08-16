@@ -120,6 +120,8 @@ function reset() {
   path.splice(0);
   gameMap.splice(0);
   enemies.splice(0);
+  turrets.splice(0);
+  waveCount = 0;
 }
 function gameLoop() {
   gameTicks++;
@@ -130,7 +132,6 @@ function gameLoop() {
   if (gameTicks % (24 * 30) === 0) {
     waveGeneration();
   }
-
   checkWinLose();
   enemyMove();
   renderAll();
@@ -335,41 +336,48 @@ function enemyMove() {
 function waveGeneration() {
   waveCount++;
   let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
+  let mobCount = 0;
   while (waveStrength > 0) {
+    mobCount++;
     const random = Math.random() * 100;
+
     if (random <= 5) {
-      waveStrength -= spawnEnemy('enderman');
+      waveStrength -= spawnEnemy('enderman', mobCount);
     } else if (random <= 50 && random > 5) {
-      waveStrength -= spawnEnemy('zombie');
+      waveStrength -= spawnEnemy('zombie', mobCount);
     } else if (random <= 70 && random > 50) {
-      waveStrength -= spawnEnemy('skeleton');
+      waveStrength -= spawnEnemy('skeleton', mobCount);
     } else if (random <= 85 && random > 70) {
-      waveStrength -= spawnEnemy('bat');
+      waveStrength -= spawnEnemy('bat', mobCount);
     } else {
-      waveStrength -= spawnEnemy('spider');
+      waveStrength -= spawnEnemy('spider', mobCount);
     }
   }
 }
-function spawnEnemy(type: EnemyTypes) {
-  enemies.push({
-    ...ENEMY_OPTIONS[type],
-    pathPosition: 0,
-    posX: indexToPixel(path[0].positionX),
-    posY: indexToPixel(path[0].positionY),
-    type: type,
-  });
+
+function spawnEnemy(type: EnemyTypes, delay: number) {
+  setTimeout(
+    () =>
+      enemies.push({
+        ...ENEMY_OPTIONS[type],
+        pathPosition: 0,
+        posX: indexToPixel(path[0].positionX),
+        posY: indexToPixel(path[0].positionY),
+        type: type,
+      }),
+    delay * 500
+  );
   return ENEMY_OPTIONS[type].strength;
 }
 //-------------------Tower-functions-----------------------
 function towerAttack() {
-  if (!enemies.length) {
-    return;
-  }
   for (const tower of turrets) {
-    enemies[0].health -= tower.damage;
-    if (enemies[0].health <= 0) {
-      player.money += ENEMY_OPTIONS[enemies[0].type].money;
-      enemies.splice(0, 1);
+    if (enemies.length) {
+      enemies[0].health -= tower.damage;
+      if (enemies[0].health <= 0) {
+        player.money += ENEMY_OPTIONS[enemies[0].type].money;
+        enemies.splice(0, 1);
+      }
     }
   }
 }
