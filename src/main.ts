@@ -123,6 +123,8 @@ function game() {
 }
 
 function reset() {
+  player.exp = 0;
+  player.level = 0;
   player.health = 20;
   playerMoney = 100;
   playerDamage(0);
@@ -146,7 +148,7 @@ function gameLoop() {
   checkWinLose();
   enemyMove();
   renderAll();
-  playerXP(0);
+  playerXP();
 }
 
 //-----------------------Renders---------------------------
@@ -319,11 +321,13 @@ function playerDamage(damage: number) {
   hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
 }
 
-function playerXP(xpAmount: number) {
-  player.exp += xpAmount;
-  // player.level = Math.floor(player.exp / 100);
-  // expFull?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
+function playerXP() {
+  if (player.exp > 100) {
+    player.exp -= 100;
+    player.level++;
+  }
 
+  expFull?.setAttribute('style', `width:  ${3.8 * player.exp + 1}px; `);
   const level = document.querySelector('#level') as HTMLDivElement;
   level.innerText = `${player.level}`;
 }
@@ -403,7 +407,7 @@ function towerAttack() {
       enemies[0].health -= tower.damage;
       if (enemies[0].health <= 0) {
         playerMoney += ENEMY_OPTIONS[enemies[0].type].money;
-        playerXP(ENEMY_OPTIONS[enemies[0].type].strength);
+        player.exp += ENEMY_OPTIONS[enemies[0].type].strength;
         enemies.splice(0, 1);
       }
     }
