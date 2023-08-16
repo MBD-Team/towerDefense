@@ -310,13 +310,11 @@ function openOptionsMenu(x: number, y: number) {
   const menuOption1 = document.querySelector('#menuOption1') as HTMLDivElement;
   menuOption1.onclick = () => {
     optionsMenu.close();
-    console.log('close Tier I');
     tileClick(x, y, 'tier1');
   };
   const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
   menuOption2.onclick = () => {
     optionsMenu.close();
-    console.log('close Tier II');
     tileClick(x, y, 'tier2');
   };
   const menuOption3 = document.querySelector('#menuOption3') as HTMLDivElement;
