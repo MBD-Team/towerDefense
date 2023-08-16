@@ -191,7 +191,7 @@ function renderEnemy() {
   });
   for (const enemy of enemies) {
     const enemyDiv = document.createElement('div');
-    enemyDiv.className = 'enemy';
+    enemyDiv.classList.add(`enemy`, enemy.type);
     enemyDiv.setAttribute('style', `top:${enemy.posY}px; left:${enemy.posX}px`);
     const gameField = document.querySelector('.field');
     gameField?.appendChild(enemyDiv);
