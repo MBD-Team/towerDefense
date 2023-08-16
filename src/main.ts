@@ -44,6 +44,10 @@ const player = {
   health: 20,
   money: 100,
 };
+
+const hearths20 = document.querySelector('.hearths20');
+hearths20?.setAttribute('style', `width:  162px; `);
+
 const TURRET_OPTIONS = {
   'Tier I': {
     cost: 50,
@@ -132,10 +136,7 @@ function CheckWinLose() {
 
 function playerDamage(Damage: number) {
   player.health -= Damage;
-  // const health20 = document.querySelector('.health20');
-  // health20?.setAttribute(`width:  174px; `);
-  // 174
-  // ${174/5*player.health}
+  hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
 }
 
 function renderMap() {
@@ -220,15 +221,15 @@ function enemyMove() {
     if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
       enemy.pathPosition++;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
-      enemy.posX -= 2;
+      enemy.posX -= 4;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
-      enemy.posX += 2;
+      enemy.posX += 4;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
-      enemy.posY -= 2;
+      enemy.posY -= 4;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
-      enemy.posY += 2;
+      enemy.posY += 4;
     }
-    if (pixelToIndex(enemy.posX) === player.positionX && pixelToIndex(enemy.posY) === player.positionY) {
+    if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
       enemy.posX = indexToPixel(path[0].positionX);
       enemy.posY = indexToPixel(path[0].positionY);
       enemy.pathPosition = 0;
@@ -322,6 +323,7 @@ function openOptionsMenu(x: number, y: number) {
     optionsMenu.close();
     sellTower(x, y);
   };
+  renderMap();
 }
 declare global {
   interface Window {
