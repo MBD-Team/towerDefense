@@ -15,6 +15,7 @@ type Enemy = {
   posY: number;
   health: number;
   money: number;
+  speed: number;
 };
 
 type TurretTypes = 'tier1' | 'tier2';
@@ -68,26 +69,31 @@ const ENEMY_OPTIONS = {
     health: 7,
     money: 10,
     strength: 6,
+    speed: 1,
   },
   spider: {
     health: 3,
     money: 5,
     strength: 4,
+    speed: 2,
   },
   skeleton: {
     health: 5,
     money: 7,
     strength: 5,
+    speed: 2,
   },
   enderman: {
     health: 15,
     money: 20,
     strength: 12,
+    speed: 2,
   },
   bat: {
     health: 1,
     money: 1,
     strength: 1,
+    speed: 4,
   },
 };
 
@@ -309,13 +315,13 @@ function enemyMove() {
     if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
       enemy.pathPosition++;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
-      enemy.posX -= 4;
+      enemy.posX -= enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
-      enemy.posX += 4;
+      enemy.posX += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
-      enemy.posY -= 4;
+      enemy.posY -= enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
-      enemy.posY += 4;
+      enemy.posY += enemy.speed;
     }
     if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
       enemy.posX = indexToPixel(path[0].positionX);
