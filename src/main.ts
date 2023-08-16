@@ -123,6 +123,10 @@ function CheckWinLose() {
 
 function playerDamage(Damage: number) {
   player.health -= Damage;
+  // const health20 = document.querySelector('.health20');
+  // health20?.setAttribute(`width:  174px; `);
+  // 174
+  // ${174/5*player.health}
 }
 
 function renderMap() {
@@ -203,7 +207,7 @@ function enemyMove() {
       enemy.posY = indexToPixel(path[0].positionY);
       enemy.pathPosition = 0;
       playerDamage(1);
-      renderEnemy();
+      enemyDeath();
     }
   }
 }
@@ -228,6 +232,7 @@ function towerAttack() {
     enemyDeath(); // FIXME: checking if all enemies are dead while only the first one got shot (performance problems maybe)
   }
 }
+
 function enemyDeath() {
   for (let i = 0; i < enemies.length; i++) {
     if (enemies[i].health <= 0) {
