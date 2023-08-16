@@ -9,6 +9,9 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
+  background-image:  url(/mc-dirt.png);
+  /* background- */
+  /* filter:saturate(0.5) */
 }
 h1{
   font-size: 8vh;
@@ -124,4 +127,16 @@ flex-direction: column;
   object-fit: cover;
   position: absolute;
   transform: translate(-50%,-50%);
+}
+
+.moneyList{
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.moneyInv{
+  float: left;
+  width: 64px;
+  padding: 5px;
 }
