@@ -101,6 +101,17 @@ flex-direction: column;
   object-position: left bottom;
 }
 
+.hearths20{
+  position: absolute;
+  width:  161px; 
+  height: 18px;
+  /* width 174 is standard */
+  object-fit: cover;
+  object-position: left bottom;
+  transform: translate(6px,6px);
+}
+
+
 .health0{
   width:  174px;
   height: 30px;
