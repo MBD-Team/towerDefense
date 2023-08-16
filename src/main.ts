@@ -138,7 +138,6 @@ function gameLoop() {
   checkMoney();
   gameTicks++;
   if (gameTicks % 24 === 0) {
-    console.log(turrets.length);
     towerAttack();
   }
 
@@ -401,9 +400,7 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
 //-------------------Tower-functions-----------------------
 function towerAttack() {
   for (const tower of turrets) {
-    console.log('test', turrets.length);
     if (enemies.length) {
-      console.log(tower);
       enemies[0].health -= tower.damage;
       if (enemies[0].health <= 0) {
         playerMoney += ENEMY_OPTIONS[enemies[0].type].money;
