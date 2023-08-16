@@ -133,10 +133,28 @@ flex-direction: column;
   content: "";
   clear: both;
   display: table;
+  object-fit: cover;
+  
+  
 }
 
 .moneyInv{
   float: left;
   width: 64px;
   padding: 5px;
+
+}
+
+.moneyNumber{
+color: white;
+transform: translate(55px,-50px);
+object-fit: cover;
+font-size: 15px; 
+}
+.moneyImg{
+  outline: 2px solid black;
+  border: 5px solid rgb(172, 172, 172);
+  background-color: #57575786;
+  width:  64px;
+  height: 64px;
 }

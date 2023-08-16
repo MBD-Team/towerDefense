@@ -44,13 +44,18 @@ const gameSizeY = 11;
 let waveCount = 0;
 const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
+let playerMoney = 100;
+// let copper = 0;
+// let iron = 0;
+// let gold = 0;
+// let diamond = 0;
+// let netherite = 0;
 
 //------------------------Objects-------------------------
 const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
-  money: 100,
 };
 
 const TURRET_OPTIONS = {
@@ -115,7 +120,7 @@ function game() {
 
 function reset() {
   player.health = 20;
-  player.money = 100;
+  playerMoney = 100;
   playerDamage(0);
   path.splice(0);
   gameMap.splice(0);
@@ -124,6 +129,7 @@ function reset() {
   waveCount = 0;
 }
 function gameLoop() {
+  checkMoney();
   gameTicks++;
   if (gameTicks % 24 === 0) {
     towerAttack();
@@ -136,33 +142,10 @@ function gameLoop() {
   enemyMove();
   renderAll();
 }
-function placeTower(indexX: number, indexY: number, type: TurretTypes) {
-  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
-    console.log('didnt work');
-    return;
-  }
-  if (player.money >= TURRET_OPTIONS[type].cost + 5 * towers) {
-    turrets.push({
-      ...TURRET_OPTIONS[type],
-      posX: indexToPixel(indexX),
-      posY: indexToPixel(indexY),
-      type: type,
-    });
-    player.money -= TURRET_OPTIONS[type].cost + 5 * towers;
-    towers += 1;
-    console.log(turrets);
-  }
-  renderTurret();
-  console.log('render turret');
-}
+
 //-----------------------Renders---------------------------
 function renderAll() {
-  renderPlayerStats();
   renderEnemy();
-}
-function renderPlayerStats() {
-  const money = document.querySelector('.money') as HTMLDivElement;
-  money.innerText = `Money = ${player.money}`;
 }
 function renderMap() {
   const gameField = document.querySelector('.field');
@@ -233,7 +216,7 @@ function createPath() {
   let pathX = Math.floor(Math.random() * gameSizeX) + 1;
   while (pathY > 0) {
     const direction = Math.floor(Math.random() * 100) + 1;
-    //---------------------
+
     if (gameMap[pathX - 1] && gameMap[pathX - 1][pathY]) {
       if (direction < 45) {
         if (!path.find(field => field.positionX === pathX - 1 && field.positionY === pathY)) {
@@ -299,10 +282,34 @@ function checkWinLose() {
     deathText.showModal();
   }
 }
+
+function checkMoney() {
+  let moneyString = playerMoney.toString();
+  moneyString = moneyString.padStart(5, '0');
+
+  const copper = document.querySelector('#copper') as HTMLDivElement;
+  copper.innerText = `${moneyString.substring(5, 4)}`;
+
+  const iron = document.querySelector('#iron') as HTMLDivElement;
+  iron.innerText = `${moneyString.substring(4, 3)}`;
+
+  const gold = document.querySelector('#gold') as HTMLDivElement;
+  gold.innerText = `${moneyString.substring(3, 2)}`;
+
+  const diamond = document.querySelector('#diamond') as HTMLDivElement;
+  diamond.innerText = `${moneyString.substring(2, 1)}`;
+
+  const netherite = document.querySelector('#netherite') as HTMLDivElement;
+
+  netherite.innerText = `${moneyString.substring(1, 0)}`;
+}
+
+//--------------------Player-Functions-----------------------
 function playerDamage(damage: number) {
   player.health -= damage;
   hearths20?.setAttribute('style', `width:  ${8 * player.health + 1}px; `);
 }
+
 //---------------------Calculations------------------------
 function indexToPixel(index: number) {
   return index * 64 + 32;
@@ -375,7 +382,7 @@ function towerAttack() {
     if (enemies.length) {
       enemies[0].health -= tower.damage;
       if (enemies[0].health <= 0) {
-        player.money += ENEMY_OPTIONS[enemies[0].type].money;
+        playerMoney += ENEMY_OPTIONS[enemies[0].type].money;
         enemies.splice(0, 1);
       }
     }
@@ -383,10 +390,9 @@ function towerAttack() {
 }
 function sellTower(xIndex: number, yIndex: number) {
   turrets.splice(xIndex && yIndex, 1);
-  player.money += 30;
+  playerMoney += 30;
   towers -= 1;
   renderTurret();
-  console.log('sell Tower');
 }
 function openOptionsMenu(x: number, y: number) {
   const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
@@ -407,7 +413,22 @@ function openOptionsMenu(x: number, y: number) {
     sellTower(x, y);
   };
 }
-
+function placeTower(indexX: number, indexY: number, type: TurretTypes) {
+  if (path.find(a => a.positionX === indexX && a.positionY === indexY)) {
+    return;
+  }
+  if (playerMoney >= TURRET_OPTIONS[type].cost + 5 * towers) {
+    turrets.push({
+      ...TURRET_OPTIONS[type],
+      posX: indexToPixel(indexX),
+      posY: indexToPixel(indexY),
+      type: type,
+    });
+    playerMoney -= TURRET_OPTIONS[type].cost + 5 * towers;
+    towers += 1;
+  }
+  renderTurret();
+}
 //-------------------Type-Script-Bullshit-----------------------
 declare global {
   interface Window {
