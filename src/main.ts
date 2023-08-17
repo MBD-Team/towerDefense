@@ -63,7 +63,7 @@ const player = {
 const TURRET_OPTIONS = {
   dispenser: {
     cost: 50,
-    damage: 5,
+    damage: 1,
     range: indexToPixel(3),
   },
   ironGolem: {
@@ -422,7 +422,7 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
         type: type,
         walkedPixels: 0,
       }),
-    delay * 3000
+    delay * 500
   );
   return ENEMY_OPTIONS[type].strength;
 }
