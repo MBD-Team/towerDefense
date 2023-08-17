@@ -366,19 +366,19 @@ function pixelToIndex(index: number) {
 function enemyMove() {
   for (const enemy of enemies) {
     if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
-      enemy.pathPosition++;
+      enemy.pathPosition += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
       enemy.posX -= enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
       enemy.posX += enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
       enemy.posY -= enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
       enemy.posY += enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     }
     if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
       enemy.posX = indexToPixel(path[0].positionX);
