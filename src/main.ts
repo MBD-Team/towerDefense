@@ -14,11 +14,12 @@ type Enemy = {
   posX: number;
   posY: number;
   health: number;
+  maxHealth: number;
   money: number;
   speed: number;
   walkedPixels: number;
 };
-type TargetTypes = 'first' | 'last' | 'close' | 'furthest';
+type TargetTypes = 'first' | 'mostHealth' | 'close' | 'furthest' | 'leastHealth';
 type TurretTypes = 'dispenser' | 'ironGolem';
 type Turret = {
   type: TurretTypes;
@@ -76,30 +77,35 @@ const TURRET_OPTIONS = {
 const ENEMY_OPTIONS = {
   zombie: {
     health: 7,
+    maxHealth: 7,
     money: 10,
     strength: 6,
     speed: 1,
   },
   spider: {
     health: 3,
+    maxHealth: 3,
     money: 5,
     strength: 4,
     speed: 2,
   },
   skeleton: {
     health: 5,
+    maxHealth: 5,
     money: 7,
     strength: 5,
     speed: 2,
   },
   enderman: {
     health: 15,
+    maxHealth: 15,
     money: 20,
     strength: 12,
     speed: 2,
   },
   bat: {
     health: 1,
+    maxHealth: 1,
     money: 1,
     strength: 1,
     speed: 4,
@@ -474,27 +480,12 @@ function mostDistance() {
   return firstEnemy;
 }
 
-function leastDistance() {
-  let leastEnemy = 0;
-  let leastEnemyDistance = (gameSizeX * gameSizeY) / 2;
-  let enemyDistance = 0;
-
-  for (let i = 0; i < enemies.length; i++) {
-    enemyDistance = enemies[i].walkedPixels;
-    if (enemyDistance < leastEnemyDistance) {
-      leastEnemyDistance = enemyDistance;
-      leastEnemy = i;
-    }
-  }
-  return leastEnemy;
-}
-
 function mostHealth() {
   let mostHealthyEnemy = 0;
   let mostHealthyEnemyHealth = (gameSizeX * gameSizeY) / 2;
   let enemyHealth = 0;
   for (let i = 0; i < enemies.length; i++) {
-    enemyHealth = enemies[i].health;
+    enemyHealth = enemies[i].maxHealth;
     if (enemyHealth > mostHealthyEnemyHealth) {
       mostHealthyEnemyHealth = enemyHealth;
       mostHealthyEnemy = i;
@@ -535,15 +526,18 @@ function towerAttack() {
       let targetEnemy: number;
       if (tower.target === 'first') {
         targetEnemy = mostDistance();
-      } else if (tower.target === 'last') {
-        targetEnemy = leastDistance();
       } else if (tower.target === 'close') {
         targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+      } else if (tower.target === 'mostHealth') {
+        targetEnemy = mostHealth();
+      } else if (tower.target === 'leastHealth') {
+        targetEnemy = leastHealth();
       } else {
         targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
       }
-      if (tower.range > Math.sqrt(Math.pow(tower.posX - enemies[targetEnemy].posX, 2) + Math.pow(tower.posY - enemies[targetEnemy].posY, 2))) {
-        if (enemies.length) {
+      if (enemies.length) {
+        const enemyDistance = Math.hypot(tower.posX - enemies[targetEnemy].posX, tower.posY - enemies[targetEnemy].posY);
+        if (tower.range > enemyDistance) {
           enemies[targetEnemy].health -= tower.damage;
           if (enemies[targetEnemy].health < 1) {
             player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
@@ -617,7 +611,7 @@ function openTowerMenu(x: number, y: number, tower: Turret) {
     };
     const towerMenuObject5 = document.querySelector('#towerObject5') as HTMLDivElement;
     towerMenuObject5.onclick = () => {
-      tower.target = 'last';
+      tower.target = 'mostHealth';
     };
     const towerMenuObject6 = document.querySelector('#towerObject6') as HTMLDivElement;
     towerMenuObject6.onclick = () => {
@@ -626,6 +620,10 @@ function openTowerMenu(x: number, y: number, tower: Turret) {
     const towerMenuObject7 = document.querySelector('#towerObject7') as HTMLDivElement;
     towerMenuObject7.onclick = () => {
       tower.target = 'furthest';
+    };
+    const towerMenuObject8 = document.querySelector('#towerObject8') as HTMLDivElement;
+    towerMenuObject8.onclick = () => {
+      tower.target = 'leastHealth';
     };
     const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLDivElement;
     towerMenuObject3.onclick = () => {
