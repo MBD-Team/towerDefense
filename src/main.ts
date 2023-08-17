@@ -411,7 +411,7 @@ function towerRange(towerX: number, towerY: number) {
       closesEnemy = i;
     }
   }
-  console.log('attacked:', enemies[closesEnemy]);
+  console.log('attacked:', enemies[closesEnemy].type);
   return closesEnemy;
 }
 
@@ -421,10 +421,10 @@ function towerAttack() {
     if (enemies.length) {
       enemies[targetEnemy].health -= tower.damage;
       if (enemies[targetEnemy].health < 1) {
-        console.log('killed', enemies[targetEnemy]);
         playerMoney += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
         player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-        enemies.splice(0, 1);
+        console.log('killed', enemies[targetEnemy].type, enemies[targetEnemy]);
+        enemies.splice(targetEnemy, 1);
       }
     }
   }
