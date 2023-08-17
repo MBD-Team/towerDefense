@@ -44,6 +44,7 @@ let gameTicks = 0;
 const gameSizeX = 19;
 const gameSizeY = 11;
 let waveCount = 0;
+let functionOn = false;
 const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
 const expFull = document.querySelector('.expFull');
@@ -187,6 +188,7 @@ function renderTurret() {
     const turretDiv = document.createElement('div');
     turretDiv.className = 'turret';
     turretDiv.onclick = () => {
+      functionOn = !functionOn;
       openTowerMenu(pixelToIndex(tower.posX), pixelToIndex(tower.posY));
       renderRange(tower);
     };
@@ -209,21 +211,25 @@ function renderEnemy() {
 }
 
 function renderRange(tower: Turret) {
-  document.querySelector('.range')?.remove();
+  if (functionOn) {
+    document.querySelector('.range')?.remove();
 
-  const rangeDiv = document.createElement('div');
-  rangeDiv.setAttribute(
-    'style',
-    `border-radius:50%; background-color:rgba(255,0,0,0.1);
+    const rangeDiv = document.createElement('div');
+    rangeDiv.setAttribute(
+      'style',
+      `border-radius:50%; background-color:rgba(255,0,0,0.1);
     top:${tower.posY}px; left:${tower.posX}px;
     width: ${tower.range * 2}px; height: ${tower.range * 2}px;
     position:absolute;transform: translate(-50%,-50%);
     border: 1px solid red;
     box-sizing:border-box;
     pointer-events: none;`
-  );
-  rangeDiv.className = 'range';
-  document.querySelector('.field')?.appendChild(rangeDiv);
+    );
+    rangeDiv.className = 'range';
+    document.querySelector('.field')?.appendChild(rangeDiv);
+  } else {
+    document.querySelector('.range')?.remove();
+  }
 }
 //------------------------Create---------------------------
 function createMap() {
@@ -544,18 +550,22 @@ function openTowerMenu(x: number, y: number) {
   const towerMenu = document.querySelector('.towerMenu') as HTMLDialogElement;
   towerMenu.show();
   const towerMenuObject1 = document.querySelector('#towerObject1') as HTMLDivElement;
-  towerMenuObject1.onclick = () => {
+  if (functionOn) {
+    towerMenuObject1.onclick = () => {
+      towerMenu.close();
+    };
+    const towerMenuObject2 = document.querySelector('#towerObject2') as HTMLDivElement;
+    towerMenuObject2.onclick = () => {
+      towerMenu.close();
+    };
+    const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLDivElement;
+    towerMenuObject3.onclick = () => {
+      towerMenu.close();
+      sellTower(x, y);
+    };
+  } else {
     towerMenu.close();
-  };
-  const towerMenuObject2 = document.querySelector('#towerObject2') as HTMLDivElement;
-  towerMenuObject2.onclick = () => {
-    towerMenu.close();
-  };
-  const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLDivElement;
-  towerMenuObject3.onclick = () => {
-    towerMenu.close();
-    sellTower(x, y);
-  };
+  }
 }
 function placeTower(indexX: number, indexY: number) {
   if (path.find(a => a.positionX === indexX && a.positionY === indexY) || selectedTurret === null) {
