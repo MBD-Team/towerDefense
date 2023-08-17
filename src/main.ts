@@ -599,41 +599,38 @@ function renderShop() {
   };
 }
 
+function renderTowerMenu() {}
+
 function openTowerMenu(x: number, y: number, tower: Turret) {
-  const towerMenu = document.querySelector('.towerMenu') as HTMLDialogElement;
-  towerMenu.show();
-  const towerMenuObject1 = document.querySelector('#towerObject1') as HTMLDivElement;
+  const menuItem = document.querySelectorAll('.menuItem');
+  menuItem.forEach(a => {
+    a.setAttribute('style', 'background-color:#0000005d');
+  });
+  const towerMenuObject1 = document.querySelector('#towerObject1') as HTMLElement;
   if (functionOn) {
-    towerMenuObject1.onclick = () => {
-      towerMenu.close();
-    };
-    const towerMenuObject2 = document.querySelector('#towerObject2') as HTMLDivElement;
-    towerMenuObject2.onclick = () => {
-      towerMenu.close();
-    };
-    const towerMenuObject4 = document.querySelector('#towerObject4') as HTMLDivElement;
+    towerMenuObject1.onclick = () => {};
+    const towerMenuObject2 = document.querySelector('#towerObject2') as HTMLElement;
+    towerMenuObject2.onclick = () => {};
+    const towerMenuObject4 = document.querySelector('#towerObject4') as HTMLElement;
     towerMenuObject4.onclick = () => {
       tower.target = 'first';
     };
-    const towerMenuObject5 = document.querySelector('#towerObject5') as HTMLDivElement;
+    const towerMenuObject5 = document.querySelector('#towerObject5') as HTMLElement;
     towerMenuObject5.onclick = () => {
       tower.target = 'last';
     };
-    const towerMenuObject6 = document.querySelector('#towerObject6') as HTMLDivElement;
+    const towerMenuObject6 = document.querySelector('#towerObject6') as HTMLElement;
     towerMenuObject6.onclick = () => {
       tower.target = 'close';
     };
-    const towerMenuObject7 = document.querySelector('#towerObject7') as HTMLDivElement;
+    const towerMenuObject7 = document.querySelector('#towerObject7') as HTMLElement;
     towerMenuObject7.onclick = () => {
       tower.target = 'furthest';
     };
-    const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLDivElement;
+    const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLElement;
     towerMenuObject3.onclick = () => {
-      towerMenu.close();
       sellTower(x, y);
     };
-  } else {
-    towerMenu.close();
   }
 }
 function placeTower(indexX: number, indexY: number) {

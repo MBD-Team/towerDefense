@@ -60,18 +60,8 @@
       <p>You lost</p>
       <button class="reset" onclick="document.querySelector('.death').close(); game()">Restart</button>
     </dialog>
-    <dialog class="optionsMenu">
-      <div class="dialogStyle">
-        <div class="optionObject" id="menuOption1">
-          <p>Tier I Dispenser</p>
-        </div>
-        <div class="optionObject" id="menuOption2">
-          <p>Tier II Dispenser</p>
-        </div>
-      </div>
-    </dialog>
 
-    <dialog class="towerMenu">
+    <!-- <dialog class="towerMenu">
       <div class="towerMenuStyles">
         <div class="towerMenuObject" id="towerObject1">Upgrade Tower</div>
         <div class="towerMenuObject" id="towerObject2">Target</div>
@@ -81,13 +71,31 @@
         <div class="towerMenuObject" id="towerObject7"><button>Furthest</button></div>
         <div class="towerMenuObject" id="towerObject3">Sell Tower</div>
       </div>
-    </dialog>
+    </dialog> -->
+
+    <div class="towerMenu">
+      <dl>
+        <dd class="menuItem" id="towerObject1">Upgrade Tower</dd>
+        <dd class="menuItem" id="towerObject2">Set Target:</dd>
+        <dd class="menuItem" id="towerObject4">First</dd>
+        <dd class="menuItem" id="towerObject5">Most Health</dd>
+        <dd class="menuItem" id="towerObject6">Close</dd>
+        <dd class="menuItem" id="towerObject7">Furthest</dd>
+        <dd class="menuItem" id="towerObject8">Least Health</dd>
+        <dd class="menuItem" id="towerObject3">Sell Tower</dd>
+      </dl>
+    </div>
 
     <div class="placeTurrets">
       <dl>
-       
-        <dd class="shopItem" id="dispenser"><img src="public/mc-dispender.png"><span class="dispenserText">Dispenser</span></dd>
-        <dd class="shopItem" id="ironGolem"><img src="public/enemy/mc-IronGolem.png"> <span class="ironGolemText">Iron Golem</span></dd>
+        <dd class="shopItem" id="dispenser">
+          <img src="public/mc-dispender.png" />
+          <span class="dispenserText">Dispenser</span>
+        </dd>
+        <dd class="shopItem" id="ironGolem">
+          <img src="public/enemy/mc-IronGolem.png" />
+          <span class="ironGolemText">Iron Golem</span>
+        </dd>
       </dl>
     </div>
     <script type="module" src="/src/main.ts"></script>

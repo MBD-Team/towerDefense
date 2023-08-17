@@ -168,23 +168,10 @@ justify-content: space-between;
 flex-direction: column;
 }
 
-.towerMenuObject{
-  background-color: var(--primary-color);
-  box-sizing: border-box;
-  font-size: 2rem;
-  padding: 6px;
-}
-
-.towerMenuObject:hover{
-  background-color: #80914b;
-}
 
 
-.towerMenu{
-  margin-left: 18vh;
-  background-color: var(--primary-color);
-  padding:0;
-}
+
+
 /* --------------enemy---------- */
 .enemy{
   position: absolute;
@@ -248,3 +235,18 @@ cursor: pointer;
 span{
   padding-left: 8px;
 }
+
+.menuItem{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  }
+
+  .towerMenu{
+    height: 704px;
+    width: 320px;
+    border: 3px solid black;
+ position: fixed;
+  left:15px;
+  bottom: 36px;
+  }
