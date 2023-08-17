@@ -25,6 +25,7 @@ type Turret = {
   damage: number;
   posX: number;
   posY: number;
+  range: number;
 };
 /** @description position as Index */
 const path: {
@@ -66,10 +67,12 @@ const TURRET_OPTIONS = {
   dispenser: {
     cost: 50,
     damage: 1,
+    range: indexToPixel(3),
   },
   ironGolem: {
     cost: 150,
     damage: 2.5,
+    range: indexToPixel(1),
   },
 };
 
@@ -127,7 +130,7 @@ function reset() {
   player.exp = 0;
   player.level = 0;
   player.health = 20;
-  playerMoney = 100;
+  playerMoney = 1000;
   playerDamage(0);
   path.splice(0);
   gameMap.splice(0);
@@ -190,6 +193,7 @@ function renderTurret() {
     turretDiv.className = 'turret';
     turretDiv.onclick = () => {
       openTowerMenu(pixelToIndex(tower.posX), pixelToIndex(tower.posY));
+      renderRange(tower);
     };
     turretDiv.setAttribute('style', `top:${tower.posY}px; left:${tower.posX}px`);
     const gameField = document.querySelector('.field');
@@ -207,6 +211,24 @@ function renderEnemy() {
     const gameField = document.querySelector('.field');
     gameField?.appendChild(enemyDiv);
   }
+}
+
+function renderRange(tower: Turret) {
+  document.querySelector('.range')?.remove();
+
+  const rangeDiv = document.createElement('div');
+  rangeDiv.setAttribute(
+    'style',
+    `border-radius:50%; background-color:rgba(255,0,0,0.1);
+    top:${tower.posY}px; left:${tower.posX}px;
+    width: ${tower.range * 2}px; height: ${tower.range * 2}px;
+    position:absolute;transform: translate(-50%,-50%);
+    border: 1px solid red;
+    box-sizing:border-box;
+    pointer-events: none;`
+  );
+  rangeDiv.className = 'range';
+  document.querySelector('.field')?.appendChild(rangeDiv);
 }
 //------------------------Create---------------------------
 function createMap() {
