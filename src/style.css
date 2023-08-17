@@ -1,4 +1,4 @@
-:root{
+:root {
   --primary-color: #606c38;
 }
 
@@ -9,21 +9,22 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-image:  url(/mc-dirt.png);
+  background-image: url(/mc-dirt.png);
+  overflow:hidden
   /* background- */
   /* filter:saturate(0.5) */
 }
-h1{
+h1 {
   font-size: 8vh;
   font-family: Arial, Helvetica, sans-serif;
   margin-bottom: 0;
 }
-.field{
+.field {
   position: relative;
   display: grid;
 }
 
-.tile{
+.tile {
   background-image: url(/mc-grass.png);
   object-fit: cover;
   box-sizing: border-box;
@@ -34,90 +35,89 @@ h1{
   justify-content: center;
 }
 
-.tower{
+.tower {
   /* border: 1px solid black; */
-  width:64px;
-  height:64px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-image: url(/mc-dispender.png);
   object-fit: cover;
 }
-.path{
+.path {
   background-image: url(/mc-sand.png);
   object-fit: cover;
   width: 64px;
   height: 64px;
 }
 
-.enemyBase{
+.enemyBase {
   background-image: url(/mc-spawner.png);
   object-fit: cover;
   width: 64px;
   height: 64px;
 }
-.playerBase{
+.playerBase {
   background-image: url(/mc-head.png);
   object-fit: cover;
   width: 64px;
-  height: 64px;}
+  height: 64px;
+}
 
-.optionsMenu{
+.optionsMenu {
   margin-left: 18vh;
   background-color: var(--primary-color);
-  padding:0;
+  padding: 0;
 }
-.dialogStyle{
-display: flex;
-justify-content: space-between;
-flex-direction: column;
+.dialogStyle {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
-.optionObject{
+.optionObject {
   background-color: var(--primary-color);
   box-sizing: border-box;
   font-size: 2rem;
   padding: 6px;
 }
 
-.optionObject:hover{
+.optionObject:hover {
   background-color: #80914b;
 }
 
 /* --------------head-bar---------- */
 
-
-.hearths20{
+.hearths20 {
   position: absolute;
-  width:  161px; 
+  width: 161px;
   height: 18px;
   object-fit: cover;
   object-position: left bottom;
-  transform: translate(6px,6px);
+  transform: translate(6px, 6px);
 }
 
-.health0{
-  width:  174px;
+.health0 {
+  width: 174px;
   height: 30px;
 }
 
-.expFull{
+.expFull {
   position: absolute;
-  width:  382px; 
+  width: 382px;
   height: 10px;
   object-fit: cover;
   object-position: left bottom;
-  transform: translate(0px,4px);
-
+  transform: translate(0px, 4px);
 }
 
-.expEmpty{
-  width:  382px; 
+.expEmpty {
+  width: 382px;
   height: 10px;
 }
 
-#level{
+#level {
   color: rgb(5, 247, 17);
   transform: translate(0px, -15px);
   margin-top: -12px;
@@ -126,127 +126,124 @@ flex-direction: column;
   text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 }
 
-.moneyList{
-  content: "";
+.moneyList {
+  content: '';
   clear: both;
   display: table;
   object-fit: cover;
 }
-.moneyInv{
+.moneyInv {
   float: left;
   width: 64px;
   padding: 5px;
 }
-.moneyNumber{
+.moneyNumber {
   color: white;
-  transform: translate(55px,-53px);
+  transform: translate(55px, -53px);
   object-fit: cover;
-  font-size: 17px; 
+  font-size: 17px;
   text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
-  }
-.moneyImg{
-   outline: 2px solid black;
-   border: 5px solid rgb(172, 172, 172);
-   background-color: #57575786;
-   width:  64px;
-   height: 64px;
-  }
+}
+.moneyImg {
+  outline: 2px solid black;
+  border: 5px solid rgb(172, 172, 172);
+  background-color: #57575786;
+  width: 64px;
+  height: 64px;
+}
 
-  
 /* --------------towers---------- */
-.turret{
-  width:64px;
-  height:64px;
+.turret {
+  width: 64px;
+  height: 64px;
   background-image: url(/mc-dispender.png);
   object-fit: cover;
   position: absolute;
-  transform: translate(-50%,-50%);
+  z-index: 1;
+  transform: translate(-50%, -50%);
 }
-.towerMenuStyles{
+.towerMenuStyles {
   display: flex;
-justify-content: space-between;
-flex-direction: column;
+  justify-content: space-between;
+  flex-direction: column;
 }
-
-
-
-
 
 /* --------------enemy---------- */
-.enemy{
+.enemy {
   position: absolute;
   object-fit: contain;
   /* border: 1px solid rgba(0, 0, 0, 0.356); */
   width: 32px;
-  height:32px;
-  transform: translate(-50%,-50%);
-  box-shadow: 0px 0px 20px 0px #000000, inset 0px 0px 20px 0px rgba(0,0,0,0.6);
+  height: 32px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 20px 0px #000000, inset 0px 0px 20px 0px rgba(0, 0, 0, 0.6);
 }
 
-.zombie{ 
+.zombie {
   background-image: url(/enemy/mc-zombie.png);
 }
 
-.bat{ 
+.bat {
   background-image: url(/enemy/mc-bat.png);
 }
 
-.spider{ 
+.spider {
   background-image: url(/enemy/mc-spider.png);
 }
 
-.skeleton{ 
+.skeleton {
   background-image: url(/enemy/mc-skeleton.jpg);
 }
 
-.enderman{ 
+.enderman {
   background-image: url(/enemy/mc-enderman.png);
 }
 
-.placeTurrets{
+.placeTurrets {
   height: 704px;
   width: 320px;
   border: 3px solid black;
-position: fixed;
-right: 15px;
-bottom: 36px;
+  position: fixed;
+  right: 15px;
+  bottom: 36px;
 }
 
-dl{
- font-size: 2rem;
- color:white;
-/* background-color: #0000005d;  */
-margin-top: 0;
+dl {
+  font-size: 2rem;
+  color: white;
+  /* background-color: #0000005d;  */
+  margin-top: 0;
 }
 
-dd{
+dd {
   border-bottom: 3px solid rgba(0, 0, 0, 0.589);
-  margin:0;
+  margin: 0;
   padding: 2px;
   align-items: center;
 }
 
-.shopItem{
-display: flex;
-align-items: center;
-cursor: pointer;
-}
-
-span{
-  padding-left: 8px;
-}
-
-.menuItem{
+.shopItem {
   display: flex;
   align-items: center;
   cursor: pointer;
-  }
+  user-select: none;
+}
 
-  .towerMenu{
-    height: 704px;
-    width: 320px;
-    border: 3px solid black;
- position: fixed;
-  left:15px;
+span {
+  padding-left: 8px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.towerMenu {
+  height: 704px;
+  width: 320px;
+  border: 3px solid black;
+  position: fixed;
+  left: 15px;
   bottom: 36px;
-  }
+}
