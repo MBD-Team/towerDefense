@@ -482,16 +482,45 @@ function leastDistance() {
       leastEnemy = i;
     }
   }
-
   return leastEnemy;
+}
+
+function mostHealth() {
+  let mostHealthyEnemy = 0;
+  let mostHealthyEnemyHealth = (gameSizeX * gameSizeY) / 2;
+  let enemyHealth = 0;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyHealth = enemies[i].health;
+    if (enemyHealth > mostHealthyEnemyHealth) {
+      mostHealthyEnemyHealth = enemyHealth;
+      mostHealthyEnemy = i;
+    }
+  }
+  return mostHealthyEnemy;
+}
+
+function leastHealth() {
+  let leastHealthyEnemy = 10000;
+  let leastHealthyEnemyHealth = (gameSizeX * gameSizeY) / 2;
+  let enemyHealth = 0;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyHealth = enemies[i].health;
+    if (enemyHealth < leastHealthyEnemyHealth) {
+      leastHealthyEnemyHealth = enemyHealth;
+      leastHealthyEnemy = i;
+    }
+  }
+  return leastHealthyEnemy;
 }
 
 function towerAttack() {
   for (const tower of turrets) {
-    // const targetEnemy = closestRange(tower.posX, tower.posY);
-    // const targetEnemy = mostDistance();
-    const targetEnemy = leastDistance();
     // const targetEnemy = furthestRange(tower.posX, tower.posY);
+    // const targetEnemy = closestRange(tower.posX, tower.posY);
+    const targetEnemy = mostDistance();
+    // const targetEnemy = leastDistance();
+    // const targetEnemy = leastHealth();
+    // const targetEnemy = mostHealth();
     if (enemies.length) {
       enemies[targetEnemy].health -= tower.damage;
       if (enemies[targetEnemy].health < 1) {
