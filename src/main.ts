@@ -16,6 +16,7 @@ type Enemy = {
   health: number;
   money: number;
   speed: number;
+  walkedPixels: number;
 };
 
 type TurretTypes = 'dispenser' | 'ironGolem';
@@ -47,11 +48,6 @@ const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
 const expFull = document.querySelector('.expFull');
 expFull?.setAttribute('style', `width:  162px; `);
-// let copper = 0;
-// let iron = 0;
-// let gold = 0;
-// let diamond = 0;
-// let netherite = 0;
 
 //------------------------Objects-------------------------
 const player = {
@@ -367,12 +363,16 @@ function enemyMove() {
       enemy.pathPosition++;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
       enemy.posX -= enemy.speed;
+      enemy.walkedPixels++;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
       enemy.posX += enemy.speed;
+      enemy.walkedPixels++;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
       enemy.posY -= enemy.speed;
+      enemy.walkedPixels++;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
       enemy.posY += enemy.speed;
+      enemy.walkedPixels++;
     }
     if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
       enemy.posX = indexToPixel(path[0].positionX);
@@ -406,7 +406,6 @@ function waveGeneration() {
 }
 
 function spawnEnemy(type: EnemyTypes, delay: number) {
-  console.log(enemies);
   setTimeout(
     () =>
       enemies.push({
@@ -415,6 +414,7 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
         posX: indexToPixel(path[0].positionX),
         posY: indexToPixel(path[0].positionY),
         type: type,
+        walkedPixels: 0,
       }),
     delay * 500
   );
@@ -422,7 +422,7 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
 }
 //-------------------Tower-functions-----------------------
 
-function towerRange(towerX: number, towerY: number) {
+function closestRange(towerX: number, towerY: number) {
   let closesEnemy = 0;
   let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
   let enemyDistance = null;
@@ -436,9 +436,56 @@ function towerRange(towerX: number, towerY: number) {
   return closesEnemy;
 }
 
+function furthestRange(towerX: number, towerY: number) {
+  let closesEnemy = 0;
+  let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
+  let enemyDistance = null;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyDistance = Math.sqrt(Math.pow(towerX - enemies[i].posX, 2) + Math.pow(towerY - enemies[i].posY, 2));
+    if (enemyDistance > closestEnemyDistance) {
+      closestEnemyDistance = enemyDistance;
+      closesEnemy = i;
+    }
+  }
+  return closesEnemy;
+}
+
+function mostDistance() {
+  let firstEnemy = 0;
+  let mostEnemyDistance = 0;
+  let enemyDistance = 0;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyDistance = enemies[i].walkedPixels;
+    if (enemyDistance > mostEnemyDistance) {
+      mostEnemyDistance = enemyDistance;
+      firstEnemy = i;
+    }
+  }
+
+  return firstEnemy;
+}
+
+function leastDistance() {
+  let leastEnemy = 0;
+  let leastEnemyDistance = (gameSizeX * gameSizeY) / 2;
+  let enemyDistance = 0;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyDistance = enemies[i].walkedPixels;
+    if (enemyDistance < leastEnemyDistance) {
+      leastEnemyDistance = enemyDistance;
+      leastEnemy = i;
+    }
+  }
+
+  return leastEnemy;
+}
+
 function towerAttack() {
   for (const tower of turrets) {
-    const targetEnemy = towerRange(tower.posX, tower.posY);
+    // const targetEnemy = closestRange(tower.posX, tower.posY);
+    // const targetEnemy = mostDistance();
+    const targetEnemy = leastDistance();
+    // const targetEnemy = furthestRange(tower.posX, tower.posY);
     if (enemies.length) {
       enemies[targetEnemy].health -= tower.damage;
       if (enemies[targetEnemy].health < 1) {
