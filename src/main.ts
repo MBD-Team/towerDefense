@@ -127,7 +127,7 @@ function reset() {
   player.exp = 0;
   player.level = 0;
   player.health = 20;
-  player.money = 1000;
+  player.money = 90;
   playerDamage(0);
   path.splice(0);
   gameMap.splice(0);
@@ -528,8 +528,8 @@ function leastHealth() {
 function towerAttack() {
   for (const tower of turrets) {
     const targetEnemy = closestRange(tower.posX, tower.posY);
-    if (enemies.length) {
-      if (tower.range > Math.sqrt(Math.pow(tower.posX - enemies[targetEnemy].posX, 2) + Math.pow(tower.posY - enemies[targetEnemy].posY, 2))) {
+    if (tower.range > Math.sqrt(Math.pow(tower.posX - enemies[targetEnemy].posX, 2) + Math.pow(tower.posY - enemies[targetEnemy].posY, 2))) {
+      if (enemies.length) {
         console.log(targetEnemy);
         enemies[targetEnemy].health -= tower.damage;
         if (enemies[targetEnemy].health < 1) {
