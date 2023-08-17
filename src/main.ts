@@ -388,7 +388,7 @@ function waveGeneration() {
   waveCount++;
   let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
   let mobCount = 0;
-  while (waveStrength > 0) {
+  while (waveStrength >= 0) {
     mobCount++;
     const random = Math.random() * 100;
 
@@ -407,6 +407,7 @@ function waveGeneration() {
 }
 
 function spawnEnemy(type: EnemyTypes, delay: number) {
+  console.log(enemies);
   setTimeout(
     () =>
       enemies.push({
