@@ -47,7 +47,6 @@ const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
 const expFull = document.querySelector('.expFull');
 expFull?.setAttribute('style', `width:  162px; `);
-let playerMoney = 100;
 // let copper = 0;
 // let iron = 0;
 // let gold = 0;
@@ -59,6 +58,7 @@ const player = {
   positionX: Math.floor(gameSizeX / 2),
   positionY: 0,
   health: 20,
+  money: 0,
   exp: 0,
   level: 1,
 };
@@ -130,7 +130,7 @@ function reset() {
   player.exp = 0;
   player.level = 0;
   player.health = 20;
-  playerMoney = 1000;
+  player.money = 1000;
   playerDamage(0);
   path.splice(0);
   gameMap.splice(0);
@@ -144,8 +144,7 @@ function gameLoop() {
   if (gameTicks % 24 === 0) {
     towerAttack();
   }
-
-  if (gameTicks % (24 * 30) === 0) {
+  if (gameTicks % (24 * 10) === 0) {
     waveGeneration();
   }
   checkWinLose();
@@ -317,7 +316,7 @@ function checkWinLose() {
 }
 
 function checkMoney() {
-  let moneyString = playerMoney.toString();
+  let moneyString = player.money.toString();
   moneyString = moneyString.padStart(5, '0');
 
   const copper = document.querySelector('#copper') as HTMLDivElement;
@@ -434,7 +433,6 @@ function towerRange(towerX: number, towerY: number) {
       closesEnemy = i;
     }
   }
-  console.log('attacked:', enemies[closesEnemy].type);
   return closesEnemy;
 }
 
@@ -444,9 +442,8 @@ function towerAttack() {
     if (enemies.length) {
       enemies[targetEnemy].health -= tower.damage;
       if (enemies[targetEnemy].health < 1) {
-        playerMoney += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
+        player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
         player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-        console.log('killed', enemies[targetEnemy].type, enemies[targetEnemy]);
         enemies.splice(targetEnemy, 1);
       }
     }
@@ -454,7 +451,7 @@ function towerAttack() {
 }
 function sellTower(xIndex: number, yIndex: number) {
   const turretIndex = turrets.findIndex(a => pixelToIndex(a.posX) === xIndex && pixelToIndex(a.posY) === yIndex);
-  playerMoney += TURRET_OPTIONS[turrets[turretIndex].type].cost * 0.7;
+  player.money += TURRET_OPTIONS[turrets[turretIndex].type].cost * 0.7;
   turrets.splice(turretIndex, 1);
   renderTurret();
 }
@@ -518,8 +515,8 @@ function placeTower(indexX: number, indexY: number) {
     return;
   }
 
-  if (playerMoney > TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length) {
-    playerMoney -= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length;
+  if (player.money > TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length) {
+    player.money -= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length;
     turrets.push({
       ...TURRET_OPTIONS[selectedTurret],
       posX: indexToPixel(indexX),
