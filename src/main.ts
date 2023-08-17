@@ -155,6 +155,7 @@ function gameLoop() {
   enemyMove();
   renderAll();
   playerXP();
+  turretUpgrade();
 }
 
 //-----------------------Renders---------------------------
@@ -447,6 +448,11 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
   return ENEMY_OPTIONS[type].strength;
 }
 //-------------------Tower-functions-----------------------
+function turretUpgrade() {
+  for (const tower of turrets) {
+    tower.damage = tower.damage * (tower.damage + tower.level / 2);
+  }
+}
 
 function closestRange(towerX: number, towerY: number) {
   let closesEnemy = 0;
@@ -522,18 +528,6 @@ function leastHealth() {
   return leastHealthyEnemy;
 }
 
-// function targetIsInRange(towerX: number, towerY: number, towerRange: number, enemy) {
-//   let range = towerRange;
-//   // let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
-//   let enemyDistance = null;
-//   for (let i = 0; i < enemies.length; i++) {
-//     enemyDistance = Math.sqrt(Math.pow(towerX - enemies[i].posX, 2) + Math.pow(towerY - enemies[i].posY, 2));
-//     if (enemyDistance < range) {
-//     }
-//   }
-
-// }
-
 function towerAttack() {
   let targetType: number;
   for (const tower of turrets) {
@@ -557,7 +551,7 @@ function towerAttack() {
             }
 
             enemies[targetType].health -= tower.damage;
-
+            console.log(tower.damage);
             if (enemies[i].health < 1) {
               player.money += ENEMY_OPTIONS[enemies[i].type].money;
               player.exp += ENEMY_OPTIONS[enemies[i].type].strength;
@@ -575,20 +569,6 @@ function sellTower(xIndex: number, yIndex: number) {
   turrets.splice(turretIndex, 1);
   renderTurret();
 }
-// function openOptionsMenu(x: number, y: number) {
-//   const optionsMenu = document.querySelector('.optionsMenu') as HTMLDialogElement;
-//   optionsMenu.show();
-//   const menuOption1 = document.querySelector('#menuOption1') as HTMLDivElement;
-//   menuOption1.onclick = () => {
-//     optionsMenu.close();
-//     placeTower(x, y, 'tier1');
-//   };
-//   const menuOption2 = document.querySelector('#menuOption2') as HTMLDivElement;
-//   menuOption2.onclick = () => {
-//     optionsMenu.close();
-//     placeTower(x, y, 'tier2');
-//   };
-// }
 
 function renderShop() {
   const dispenser = document.querySelector('#dispenser') as HTMLElement;
