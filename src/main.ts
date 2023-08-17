@@ -152,14 +152,13 @@ function gameLoop() {
   }
   checkWinLose();
   enemyMove();
-  renderAll();
+  renderEnemy();
+
   playerXP();
 }
 
 //-----------------------Renders---------------------------
-function renderAll() {
-  renderEnemy();
-}
+
 function renderMap() {
   const gameField = document.querySelector('.field');
   if (gameField !== null) {
@@ -217,9 +216,7 @@ function renderEnemy() {
 }
 
 function renderRange(tower: Turret) {
-  if (functionOn) {
-    document.querySelector('.range')?.remove();
-
+  if (!document.querySelector('.range')) {
     const rangeDiv = document.createElement('div');
     rangeDiv.setAttribute(
       'style',
@@ -237,6 +234,7 @@ function renderRange(tower: Turret) {
     document.querySelector('.range')?.remove();
   }
 }
+
 //------------------------Create---------------------------
 function createMap() {
   for (let x = 0; x < gameSizeX; x++) {
@@ -397,7 +395,7 @@ function enemyMove() {
 }
 function waveGeneration() {
   waveCount++;
-  let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
+  let waveStrength = waveCount + 0.5 * waveCount ** 2 + 0.05 * waveCount ** 3;
   let mobCount = 0;
   while (waveStrength >= 0) {
     mobCount++;
@@ -551,6 +549,7 @@ function towerAttack() {
 }
 function sellTower(xIndex: number, yIndex: number) {
   const turretIndex = turrets.findIndex(a => pixelToIndex(a.posX) === xIndex && pixelToIndex(a.posY) === yIndex);
+  document.querySelector('.range')?.remove();
   player.money += TURRET_OPTIONS[turrets[turretIndex].type].cost * 0.7;
   turrets.splice(turretIndex, 1);
   renderTurret();
@@ -573,7 +572,7 @@ function sellTower(xIndex: number, yIndex: number) {
 function renderShop() {
   const dispenser = document.querySelector('#dispenser') as HTMLElement;
   const ironGolem = document.querySelector('#ironGolem') as HTMLElement;
-  const shopItem = document.querySelectorAll('.shopItem');
+  const shopItem = document.querySelectorAll<HTMLElement>('.shopItem');
   shopItem.forEach(a => {
     a.setAttribute('style', 'background-color:#0000005d');
   });
@@ -581,19 +580,25 @@ function renderShop() {
     shopItem.forEach(a => {
       a.setAttribute('style', 'background-color:#0000005d');
     });
-    selectedTurret = 'dispenser';
-    dispenser.setAttribute('style', 'background-color:red;');
+    if (selectedTurret !== 'dispenser') {
+      selectedTurret = 'dispenser';
+      dispenser.setAttribute('style', 'background-color:red;');
+    } else {
+      selectedTurret = null;
+    }
   };
   ironGolem.onclick = () => {
     shopItem.forEach(a => {
       a.setAttribute('style', 'background-color:#0000005d');
     });
-    selectedTurret = 'ironGolem';
-    ironGolem.setAttribute('style', 'background-color:red;');
+    if (selectedTurret !== 'ironGolem') {
+      selectedTurret = 'ironGolem';
+      ironGolem.setAttribute('style', 'background-color:red;');
+    } else {
+      selectedTurret = null;
+    }
   };
 }
-
-function renderTowerMenu() {}
 
 function openTowerMenu(x: number, y: number, tower: Turret) {
   const menuItem = document.querySelectorAll('.menuItem');
@@ -645,8 +650,9 @@ function placeTower(indexX: number, indexY: number) {
       type: selectedTurret,
       target: 'first',
     });
+    renderShop();
+    renderTurret();
   }
-  renderTurret();
 }
 //-------------------Type-Script-Bullshit-----------------------
 declare global {
