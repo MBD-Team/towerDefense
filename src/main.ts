@@ -15,7 +15,6 @@ type Enemy = {
   posY: number;
   health: number;
   maxHealth: number;
-  money: number;
   speed: number;
   walkedPixels: number;
 };
@@ -79,35 +78,30 @@ const ENEMY_OPTIONS = {
   zombie: {
     health: 7,
     maxHealth: 7,
-    money: 10,
     strength: 6,
     speed: 1,
   },
   spider: {
     health: 3,
     maxHealth: 3,
-    money: 5,
     strength: 4,
     speed: 2,
   },
   skeleton: {
     health: 5,
     maxHealth: 5,
-    money: 7,
     strength: 5,
     speed: 2,
   },
   enderman: {
     health: 15,
     maxHealth: 15,
-    money: 20,
     strength: 12,
     speed: 2,
   },
   bat: {
     health: 1,
     maxHealth: 1,
-    money: 1,
     strength: 1,
     speed: 4,
   },
@@ -127,7 +121,7 @@ function game() {
   renderMap();
   renderShop();
   waveGeneration();
-  interval = setInterval(gameLoop, 1000 / 24);
+  interval = setInterval(gameLoop, 1000 / 48);
 }
 
 function reset() {
@@ -155,7 +149,6 @@ function gameLoop() {
   enemyMove();
   renderAll();
   playerXP();
-  turretUpgrade();
 }
 
 //-----------------------Renders---------------------------
@@ -412,8 +405,9 @@ function enemyMove() {
 }
 function waveGeneration() {
   waveCount++;
-  let waveStrength = waveCount * 10 + waveCount ** 2 * 10;
+  let waveStrength = waveCount * 10 + waveCount ** 2 * 0.5;
   let mobCount = 0;
+  console.log(waveCount, waveStrength);
   while (waveStrength >= 0) {
     mobCount++;
     const random = Math.random() * 100;
@@ -532,37 +526,38 @@ function towerAttack() {
   let targetType: number;
   for (const tower of turrets) {
     if (enemies.length) {
-      if (enemies.length) {
-        for (let i = 0; i < enemies.length; i++) {
-          const targetedEnemy = enemies[i];
-          const distance = (tower.posX - enemies[i].posX) ** 2 + (tower.posY - enemies[i].posY) ** 2;
-
-          if (distance <= tower.range ** 2) {
-            if (tower.target === 'first') {
-              targetType = mostDistance();
-            } else if (tower.target === 'close') {
-              targetType = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-            } else if (tower.target === 'mostHealth') {
-              targetType = mostHealth();
-            } else if (tower.target === 'leastHealth') {
-              targetType = leastHealth();
-            } else {
-              targetType = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-            }
-
-            enemies[targetType].health -= tower.damage;
-            console.log(tower.damage);
-            if (enemies[i].health < 1) {
-              player.money += ENEMY_OPTIONS[enemies[i].type].money;
-              player.exp += ENEMY_OPTIONS[enemies[i].type].strength;
-              enemies.splice(i, 1);
-            }
+      let targetEnemy = -1;
+      for (let i = 0; i < enemies.length; i++) {
+        const distance = (tower.posX - enemies[i].posX) ** 2 + (tower.posY - enemies[i].posY) ** 2;
+        if (distance <= tower.range ** 2) {
+          if (tower.target === 'first') {
+            targetEnemy = mostDistance();
+          } else if (tower.target === 'close') {
+            targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+          } else if (tower.target === 'mostHealth') {
+            targetEnemy = mostHealth();
+          } else if (tower.target === 'leastHealth') {
+            targetEnemy = leastHealth();
+          } else {
+            targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+          }
+          if (targetEnemy !== -1) {
+            const enemy = enemies[targetEnemy];
+            enemies[targetEnemy].health -= Math.ceil(tower.damage);
+          }
+          console.log(tower.damage);
+          if (enemies[targetEnemy].health < 1) {
+            player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2;
+            player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
+            player.money = Math.floor(player.money);
+            enemies.splice(targetEnemy, 1);
           }
         }
       }
     }
   }
 }
+
 function sellTower(xIndex: number, yIndex: number) {
   const turretIndex = turrets.findIndex(a => pixelToIndex(a.posX) === xIndex && pixelToIndex(a.posY) === yIndex);
   player.money += TURRET_OPTIONS[turrets[turretIndex].type].cost * 0.7;
@@ -643,7 +638,7 @@ function placeTower(indexX: number, indexY: number) {
       posX: indexToPixel(indexX),
       posY: indexToPixel(indexY),
       type: selectedTurret,
-      level: 0,
+      level: 1,
       target: 'first',
     });
   }
