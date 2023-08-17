@@ -399,13 +399,31 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
   return ENEMY_OPTIONS[type].strength;
 }
 //-------------------Tower-functions-----------------------
+
+function towerRange(towerX: number, towerY: number) {
+  let closesEnemy = 0;
+  let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
+  let enemyDistance = null;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyDistance = Math.sqrt(Math.pow(towerX - enemies[i].posX, 2) + Math.pow(towerY - enemies[i].posY, 2));
+    if (enemyDistance < closestEnemyDistance) {
+      closestEnemyDistance = enemyDistance;
+      closesEnemy = i;
+    }
+  }
+  console.log('attacked:', enemies[closesEnemy]);
+  return closesEnemy;
+}
+
 function towerAttack() {
   for (const tower of turrets) {
+    const targetEnemy = towerRange(tower.posX, tower.posY);
     if (enemies.length) {
-      enemies[0].health -= tower.damage;
-      if (enemies[0].health <= 0) {
-        playerMoney += ENEMY_OPTIONS[enemies[0].type].money;
-        player.exp += ENEMY_OPTIONS[enemies[0].type].strength;
+      enemies[targetEnemy].health -= tower.damage;
+      if (enemies[targetEnemy].health < 1) {
+        console.log('killed', enemies[targetEnemy]);
+        playerMoney += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
+        player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
         enemies.splice(0, 1);
       }
     }
@@ -477,14 +495,14 @@ function placeTower(indexX: number, indexY: number) {
     return;
   }
 
-  if (playerMoney >= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length) {
+  if (playerMoney > TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length) {
+    playerMoney -= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length;
     turrets.push({
       ...TURRET_OPTIONS[selectedTurret],
       posX: indexToPixel(indexX),
       posY: indexToPixel(indexY),
       type: selectedTurret,
     });
-    playerMoney -= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length;
   }
   renderTurret();
 }
