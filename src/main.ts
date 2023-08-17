@@ -513,20 +513,30 @@ function leastHealth() {
   return leastHealthyEnemy;
 }
 
+// function targetIsInRange(towerX: number, towerY: number, towerRange: number, enemy) {
+//   let range = towerRange;
+//   // let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
+//   let enemyDistance = null;
+//   for (let i = 0; i < enemies.length; i++) {
+//     enemyDistance = Math.sqrt(Math.pow(towerX - enemies[i].posX, 2) + Math.pow(towerY - enemies[i].posY, 2));
+//     if (enemyDistance < range) {
+//     }
+//   }
+
+// }
+
 function towerAttack() {
   for (const tower of turrets) {
-    // const targetEnemy = furthestRange(tower.posX, tower.posY);
-    // const targetEnemy = closestRange(tower.posX, tower.posY);
-    const targetEnemy = mostDistance();
-    // const targetEnemy = leastDistance();
-    // const targetEnemy = leastHealth();
-    // const targetEnemy = mostHealth();
+    const targetEnemy = closestRange(tower.posX, tower.posY);
     if (enemies.length) {
-      enemies[targetEnemy].health -= tower.damage;
-      if (enemies[targetEnemy].health < 1) {
-        player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
-        player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-        enemies.splice(targetEnemy, 1);
+      if (tower.range > Math.sqrt(Math.pow(tower.posX - enemies[targetEnemy].posX, 2) + Math.pow(tower.posY - enemies[targetEnemy].posY, 2))) {
+        console.log(targetEnemy);
+        enemies[targetEnemy].health -= tower.damage;
+        if (enemies[targetEnemy].health < 1) {
+          player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
+          player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
+          enemies.splice(targetEnemy, 1);
+        }
       }
     }
   }
