@@ -144,7 +144,7 @@ function gameLoop() {
   if (gameTicks % 24 === 0) {
     towerAttack();
   }
-  if (gameTicks % (24 * 10) === 0) {
+  if (gameTicks % (24 * 30) === 0) {
     waveGeneration();
   }
   checkWinLose();
