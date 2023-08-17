@@ -127,7 +127,7 @@ function reset() {
   player.exp = 0;
   player.level = 0;
   player.health = 20;
-  player.money = 1000;
+  player.money = 90;
   playerDamage(0);
   path.splice(0);
   gameMap.splice(0);
@@ -369,16 +369,16 @@ function enemyMove() {
       enemy.pathPosition++;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
       enemy.posX -= enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
       enemy.posX += enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
       enemy.posY -= enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
       enemy.posY += enemy.speed;
-      enemy.walkedPixels++;
+      enemy.walkedPixels += enemy.speed;
     }
     if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
       enemy.posX = indexToPixel(path[0].positionX);
@@ -486,9 +486,48 @@ function leastDistance() {
       leastEnemy = i;
     }
   }
-
   return leastEnemy;
 }
+
+function mostHealth() {
+  let mostHealthyEnemy = 0;
+  let mostHealthyEnemyHealth = (gameSizeX * gameSizeY) / 2;
+  let enemyHealth = 0;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyHealth = enemies[i].health;
+    if (enemyHealth > mostHealthyEnemyHealth) {
+      mostHealthyEnemyHealth = enemyHealth;
+      mostHealthyEnemy = i;
+    }
+  }
+  return mostHealthyEnemy;
+}
+
+function leastHealth() {
+  let leastHealthyEnemy = 10000;
+  let leastHealthyEnemyHealth = (gameSizeX * gameSizeY) / 2;
+  let enemyHealth = 0;
+  for (let i = 0; i < enemies.length; i++) {
+    enemyHealth = enemies[i].health;
+    if (enemyHealth < leastHealthyEnemyHealth) {
+      leastHealthyEnemyHealth = enemyHealth;
+      leastHealthyEnemy = i;
+    }
+  }
+  return leastHealthyEnemy;
+}
+
+// function targetIsInRange(towerX: number, towerY: number, towerRange: number, enemy) {
+//   let range = towerRange;
+//   // let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
+//   let enemyDistance = null;
+//   for (let i = 0; i < enemies.length; i++) {
+//     enemyDistance = Math.sqrt(Math.pow(towerX - enemies[i].posX, 2) + Math.pow(towerY - enemies[i].posY, 2));
+//     if (enemyDistance < range) {
+//     }
+//   }
+
+// }
 
 function towerAttack() {
   for (const tower of turrets) {
@@ -498,19 +537,20 @@ function towerAttack() {
         targetEnemy = mostDistance();
       } else if (tower.target === 'last') {
         targetEnemy = leastDistance();
-        console.log(targetEnemy);
       } else if (tower.target === 'close') {
         targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
       } else {
         targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
       }
-      enemies[targetEnemy].health -= tower.damage;
-      console.log('target:', enemies[targetEnemy].type);
-      console.log(targetEnemy);
-      if (enemies[targetEnemy].health < 1) {
-        player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
-        player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-        enemies.splice(targetEnemy, 1);
+      if (tower.range > Math.sqrt(Math.pow(tower.posX - enemies[targetEnemy].posX, 2) + Math.pow(tower.posY - enemies[targetEnemy].posY, 2))) {
+        if (enemies.length) {
+          enemies[targetEnemy].health -= tower.damage;
+          if (enemies[targetEnemy].health < 1) {
+            player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].money;
+            player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
+            enemies.splice(targetEnemy, 1);
+          }
+        }
       }
     }
   }
