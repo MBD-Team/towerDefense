@@ -197,7 +197,7 @@ function renderTurret() {
   });
   for (const tower of turrets) {
     const turretDiv = document.createElement('div');
-    turretDiv.className = 'turret';
+    turretDiv.classList.add(`turret`, tower.type);
     turretDiv.onclick = () => {
       functionOn = !functionOn;
       openTowerMenu(pixelToIndex(tower.posX), pixelToIndex(tower.posY), tower);

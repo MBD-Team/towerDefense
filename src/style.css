@@ -160,7 +160,6 @@ h1 {
 .turret {
   width: 64px;
   height: 64px;
-  background-image: url(/mc-dispender.png);
   object-fit: cover;
   position: absolute;
   z-index: 1;
@@ -183,7 +182,7 @@ h1 {
 .dispenser{
   background-image: url(/mc-dispender.png);
 }
-.dispenser{
+.ironGolem{
   background-image: url(/mc-IronGolem.png);
 }
 
