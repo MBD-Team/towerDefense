@@ -363,17 +363,26 @@ function playerXP() {
       player.exp -= player.level * 5 + 7;
       player.level++;
     }
-  }
-  if (player.level >= 30) {
+  } else if (player.level >= 30) {
     if (player.exp >= player.level * 9 + 7) {
       player.exp -= player.level * 9 + 7;
       player.level++;
     }
   }
-
-  expFull?.setAttribute('style', `width:  ${3.8 * player.exp + 1}px; `);
-  const level = document.querySelector('#level') as HTMLDivElement;
-  level.innerText = `${player.level}`;
+  //162
+  if (player.level < 16) {
+    expFull?.setAttribute('style', `width:  ${1 + 3.8 * player.exp}px; `);
+    const level = document.querySelector('#level') as HTMLDivElement;
+    level.innerText = `${player.level}`;
+  } else if (player.level < 31) {
+    expFull?.setAttribute('style', `width:  ${1 + 3.8 * player.exp}px; `);
+    const level = document.querySelector('#level') as HTMLDivElement;
+    level.innerText = `${player.level}`;
+  } else if (player.level >= 30) {
+    expFull?.setAttribute('style', `width:  ${1 + 3.8 * player.exp}px; `);
+    const level = document.querySelector('#level') as HTMLDivElement;
+    level.innerText = `${player.level}`;
+  }
 }
 
 //---------------------Calculations------------------------
@@ -558,6 +567,7 @@ function towerAttack() {
           player.money = Math.floor(player.money);
           enemies.splice(targetEnemy, 1);
         }
+        targetEnemy = -1;
       }
     }
   }
