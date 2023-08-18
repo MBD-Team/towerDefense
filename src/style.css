@@ -227,10 +227,15 @@ dd {
 }
 
 .shopItem {
-  display: flex;
-  align-items: center;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
   cursor: pointer;
   user-select: none;
+}
+.shopItem > div {
+  display: flex;
+  align-items: center;
 }
 
 span {
@@ -241,6 +246,7 @@ span {
   display: flex;
   align-items: center;
   cursor: pointer;
+  background-color:#0000005d;
 }
 
 .towerMenu {
@@ -253,7 +259,6 @@ span {
 }
 
 .turretCost{
-  margin-left: 70px;
   text-decoration: underline;
 }
 
