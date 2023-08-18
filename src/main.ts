@@ -408,7 +408,7 @@ function enemyMove() {
     ) {
       enemy.pathPosition++;
     } else {
-      //NORTH---------------------------------------------------------------------
+      // NORTH---------------------------------------------------------------------
       if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
         enemy.posY -= enemy.speed;
         enemy.walkedPixels += enemy.speed;
@@ -438,6 +438,7 @@ function enemyMove() {
     }
   }
 }
+
 function waveGeneration() {
   if (gameTicks % (TICKS_PER_SECOND * 30) === 0) {
     waveCount++;
