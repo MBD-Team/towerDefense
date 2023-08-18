@@ -51,9 +51,7 @@ let waveCount = 0;
 let functionOn = false;
 const TICKS_PER_SECOND = 24;
 const hearths20 = document.querySelector('.hearths20');
-hearths20?.setAttribute('style', `width:  162px; `);
 const expFull = document.querySelector('.expFull');
-expFull?.setAttribute('style', `width:  162px; `);
 
 //------------------------Objects-------------------------
 const player = {
@@ -137,9 +135,12 @@ function game() {
 function reset() {
   player.exp = 0;
   player.level = 0;
+  expFull?.setAttribute('style', `width:  162px; `);
   player.health = 20;
-  player.money = 90;
   playerDamage(0);
+  hearths20?.setAttribute('style', `width:  162px; `);
+  player.money = 100;
+  gameTicks = 0;
   path.splice(0);
   gameMap.splice(0);
   enemies.splice(0);
@@ -147,19 +148,15 @@ function reset() {
   waveCount = 0;
 }
 function gameLoop() {
-  checkMoney();
-  gameTicks++;
-  towerAttack();
-  renderWaveStats();
-
-  if (gameTicks % (TICKS_PER_SECOND * 30) === 0) {
-    waveGeneration();
-  }
   checkWinLose();
-  enemyMove();
+  gameTicks++;
+  waveGeneration();
+  renderWaveStats();
   renderEnemy();
-
+  enemyMove();
+  towerAttack();
   playerXP();
+  checkMoney();
 }
 
 //-----------------------Renders---------------------------
@@ -429,24 +426,26 @@ function enemyMove() {
   }
 }
 function waveGeneration() {
-  waveCount++;
-  let waveStrength = waveCount * 10 + waveCount ** 2 * 0.5;
-  let mobCount = 0;
-  console.log(waveCount, waveStrength);
-  while (waveStrength >= 0) {
-    mobCount++;
-    const random = Math.random() * 100;
+  if (gameTicks % (TICKS_PER_SECOND * 30) === 0) {
+    waveCount++;
+    let waveStrength = waveCount * 10 + waveCount ** 2 * 0.5;
+    let mobCount = 0;
+    console.log(waveCount, waveStrength);
+    while (waveStrength >= 0) {
+      mobCount++;
+      const random = Math.random() * 100;
 
-    if (random <= 5) {
-      waveStrength -= spawnEnemy('enderman', mobCount);
-    } else if (random <= 50 && random > 5) {
-      waveStrength -= spawnEnemy('zombie', mobCount);
-    } else if (random <= 70 && random > 50) {
-      waveStrength -= spawnEnemy('skeleton', mobCount);
-    } else if (random <= 85 && random > 70) {
-      waveStrength -= spawnEnemy('bat', mobCount);
-    } else {
-      waveStrength -= spawnEnemy('spider', mobCount);
+      if (random <= 5) {
+        waveStrength -= spawnEnemy('enderman', mobCount);
+      } else if (random <= 50 && random > 5) {
+        waveStrength -= spawnEnemy('zombie', mobCount);
+      } else if (random <= 70 && random > 50) {
+        waveStrength -= spawnEnemy('skeleton', mobCount);
+      } else if (random <= 85 && random > 70) {
+        waveStrength -= spawnEnemy('bat', mobCount);
+      } else {
+        waveStrength -= spawnEnemy('spider', mobCount);
+      }
     }
   }
 }
@@ -467,16 +466,15 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
   return ENEMY_OPTIONS[type].strength;
 }
 //-------------------Tower-functions-----------------------
-function turretUpgrade() {
-  for (const tower of turrets) {
-    tower.attackSpeed = TURRET_OPTIONS[tower];
-    tower.damage;
-    tower.range;
-    tower.multishot;
-    tower.fireDamage;
-    tower.looting;
-  }
-}
+// function turretUpgrade(selectedTurret.type) {
+//   for (const tower of turrets) {
+//     selectedTurret.attackSpeed = TURRET_OPTIONS[selectedTurret.type].attackSpeed;
+//     selectedTurret.damage;= TURRET_OPTIONS[selectedTurret.type].damage;
+//     selectedTurret.range;= TURRET_OPTIONS[selectedTurret.type].range;
+//     selectedTurret.multishot;= TURRET_OPTIONS[selectedTurret.type].multishot;
+//     selectedTurret.looting;= TURRET_OPTIONS[selectedTurret.type].looting;
+//   }
+// }
 
 function closestRange(towerX: number, towerY: number) {
   let closesEnemy = 0;
