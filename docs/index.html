@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="mc-zombie.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tower Defense</title>
+    <script type="module" crossorigin src="./assets/index-d86e04b2.js"></script>
+    <link rel="stylesheet" href="./assets/index-f59f780e.css">
+  </head>
+  <body>
+    <div style="margin-bottom: 10px">
+      <div>
+        <img class="hearths20" src="./mc-20-Hearths.png" alt="Health 20" />
+        <img class="health0" src="./mc-0-Health.png" alt="Health 0" />
+      </div>
+    </div>
+    <div>
+      <img class="expFull" src="./mc-EXP-full.png" alt="EXP-full" />
+      <img class="expEmpty" src="./mc-EXP-empty.png" alt="EXP-empty" />
+      <p id="level"></p>
+    </div>
+    <div class="showWaveCount">
+      <span class="wave"></span>
+      <span class="remainingEnemies"></span>
+    </div>
+    <div style="margin-bottom: -40px">
+      <div class="moneylist">
+        <div class="moneyInv">
+          <img class="moneyImg" src="./mc-netherite.png" alt="netherite" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="./mc-diamond-ingot.png" alt="diamond" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="./mc-gold.png" alt="gold" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="./mc-iron.png" alt="iron" />
+        </div>
+        <div class="moneyInv">
+          <img class="moneyImg" src="./mc-copper.png" alt="copper" />
+        </div>
+      </div>
+      <div class="moneyNumber">
+        <div class="moneyInv">
+          <p id="netherite"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="diamond"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="gold"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="iron"></p>
+        </div>
+        <div class="moneyInv">
+          <p id="copper"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="field"></div>
+    <dialog class="death">
+      <p>You lost</p>
+      <button class="reset" onclick="document.querySelector('.death').close(); game()">Restart</button>
+    </dialog>
+
+    <div class="towerMenu">
+      <dl>
+        <dd class="menuItem" id="towerObject1">Upgrade Tower</dd>
+        <dd class="menuItem" id="towerObject2">Set Target:</dd>
+        <dd class="menuItem" id="towerObject4">First</dd>
+        <dd class="menuItem" id="towerObject5">Most Health</dd>
+        <dd class="menuItem" id="towerObject6">Close</dd>
+        <dd class="menuItem" id="towerObject7">Furthest</dd>
+        <dd class="menuItem" id="towerObject8">Least Health</dd>
+        <dd class="menuItem" id="towerObject3">Sell Tower</dd>
+      </dl>
+    </div>
+
+    <div class="placeTurrets">
+      <dl>
+        <dd class="shopItem" id="dispenser">
+          <div>
+            <img src="mc-dispender.png" />
+            <span class="dispenserText">Dispenser</span>
+          </div>
+          <span id="dispenserCost" class="turretCost"></span>
+        </dd>
+        <dd class="shopItem" id="ironGolem">
+          <div>
+            <img src="enemy/mc-IronGolem.png" />
+            <span class="ironGolemText">Iron Golem</span>
+          </div>
+          <span id="ironGolemCost" class="turretCost"></span>
+        </dd>
+      </dl>
+    </div>
+    
+  </body>
+</html>
