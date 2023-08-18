@@ -247,3 +247,8 @@ span {
   left: 15px;
   bottom: 36px;
 }
+
+.turretCost{
+  margin-left: 70px;
+  text-decoration: underline;
+}

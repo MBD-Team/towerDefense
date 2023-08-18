@@ -593,6 +593,10 @@ function renderShop() {
   const dispenser = document.querySelector('#dispenser') as HTMLElement;
   const ironGolem = document.querySelector('#ironGolem') as HTMLElement;
   const shopItem = document.querySelectorAll<HTMLElement>('.shopItem');
+  const dispenserCost = document.querySelector('#dispenserCost') as HTMLSpanElement;
+  const ironGolemCost = document.querySelector('#ironGolemCost') as HTMLSpanElement;
+  ironGolemCost.innerHTML = `${TURRET_OPTIONS.ironGolem.cost + 5 * turrets.length}`;
+  dispenserCost.innerHTML = `${TURRET_OPTIONS.dispenser.cost + 5 * turrets.length}`;
   shopItem.forEach(a => {
     a.setAttribute('style', 'background-color:#0000005d');
   });
