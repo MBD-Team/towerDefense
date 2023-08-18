@@ -22,7 +22,6 @@ type TargetTypes = 'first' | 'mostHealth' | 'close' | 'furthest' | 'leastHealth'
 type TurretTypes = 'dispenser' | 'ironGolem';
 type Turret = {
   type: TurretTypes;
-  level: number;
   cost: number;
   damage: number;
   dealtDamage: number;
@@ -30,6 +29,9 @@ type Turret = {
   posY: number;
   range: number;
   targetType: TargetTypes;
+  attackSpeed: number;
+  bulletCount: number;
+  looting: number;
 };
 /** @description position as Index */
 const path: {
@@ -47,6 +49,7 @@ const gameSizeX = 19;
 const gameSizeY = 11;
 let waveCount = 0;
 let functionOn = false;
+const TICKS_PER_SECOND = 24;
 const hearths20 = document.querySelector('.hearths20');
 hearths20?.setAttribute('style', `width:  162px; `);
 const expFull = document.querySelector('.expFull');
@@ -61,19 +64,24 @@ const player = {
   exp: 0,
   level: 1,
 };
-
 const TURRET_OPTIONS = {
   dispenser: {
     cost: 50,
     damage: 1,
     range: indexToPixel(3),
+    attackSpeed: 1,
+    bulletCount: 1,
+    looting: 0,
   },
   ironGolem: {
     cost: 150,
     damage: 2.5,
     range: indexToPixel(1),
+    attackSpeed: 1,
+    bulletCount: 1,
+    looting: 0,
   },
-};
+} as const;
 
 const ENEMY_OPTIONS = {
   zombie: {
@@ -122,7 +130,7 @@ function game() {
   renderMap();
   renderShop();
   waveGeneration();
-  interval = setInterval(gameLoop, 1000 / 24);
+  interval = setInterval(gameLoop, 1000 / TICKS_PER_SECOND);
 }
 
 function reset() {
@@ -140,11 +148,10 @@ function reset() {
 function gameLoop() {
   checkMoney();
   gameTicks++;
-  if (gameTicks % 24 === 0) {
-    towerAttack();
-    renderWaveStats();
-  }
-  if (gameTicks % (24 * 30) === 0) {
+  towerAttack();
+  renderWaveStats();
+
+  if (gameTicks % (TICKS_PER_SECOND * 30) === 0) {
     waveGeneration();
   }
   checkWinLose();
@@ -260,7 +267,7 @@ function createPath() {
     const direction = Math.floor(Math.random() * 100) + 1;
 
     if (gameMap[pathX - 1] && gameMap[pathX - 1][pathY]) {
-      if (direction < 45) {
+      if (direction < 49) {
         if (!path.find(field => field.positionX === pathX - 1 && field.positionY === pathY)) {
           if (countPathConnected(pathX - 1, pathY) < 2) {
             pathX = pathX - 1;
@@ -272,7 +279,7 @@ function createPath() {
     }
 
     if (gameMap[pathX + 1] && gameMap[pathX + 1][pathY]) {
-      if (direction < 90 && direction >= 45) {
+      if (direction < 98 && direction >= 49) {
         if (!path.find(field => field.positionX === pathX + 1 && field.positionY === pathY)) {
           if (countPathConnected(pathX + 1, pathY) < 2) {
             pathX = pathX + 1;
@@ -283,7 +290,7 @@ function createPath() {
       }
     }
     if (gameMap[pathX] && gameMap[pathX][pathY - 1]) {
-      if (direction >= 90) {
+      if (direction >= 98) {
         if (!path.find(field => field.positionX === pathX && field.positionY === pathY - 1)) {
           if (countPathConnected(pathX, pathY - 1) < 2) {
             pathY -= 1;
@@ -294,7 +301,7 @@ function createPath() {
       }
     }
   }
-  if (path.length < 60) {
+  if (path.length < 80) {
     path.splice(0);
     createPath();
   }
@@ -355,6 +362,7 @@ function playerDamage(damage: number) {
 function playerXP() {
   if (player.level < 16) {
     if (player.exp >= player.level * 2 + 7) {
+      //player.exp/2 -7
       player.exp -= player.level * 2 + 7;
       player.level++;
     }
@@ -363,23 +371,23 @@ function playerXP() {
       player.exp -= player.level * 5 + 7;
       player.level++;
     }
-  } else if (player.level >= 30) {
+  } else if (player.level > 30) {
     if (player.exp >= player.level * 9 + 7) {
       player.exp -= player.level * 9 + 7;
       player.level++;
     }
   }
-  //162
+  //382
   if (player.level < 16) {
-    expFull?.setAttribute('style', `width:  ${1 + 3.8 * player.exp}px; `);
+    expFull?.setAttribute('style', `width:  ${(player.exp / (player.level * 2 + 7)) * 382}px; `);
     const level = document.querySelector('#level') as HTMLDivElement;
     level.innerText = `${player.level}`;
   } else if (player.level < 31) {
-    expFull?.setAttribute('style', `width:  ${1 + 3.8 * player.exp}px; `);
+    expFull?.setAttribute('style', `width:  ${(player.exp / (player.level * 5 + 7)) * 382}px; `);
     const level = document.querySelector('#level') as HTMLDivElement;
     level.innerText = `${player.level}`;
-  } else if (player.level >= 30) {
-    expFull?.setAttribute('style', `width:  ${1 + 3.8 * player.exp}px; `);
+  } else if (player.level > 30) {
+    expFull?.setAttribute('style', `width:  ${(player.exp / (player.level * 9 + 7)) * 382}px; `);
     const level = document.querySelector('#level') as HTMLDivElement;
     level.innerText = `${player.level}`;
   }
@@ -460,7 +468,12 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
 //-------------------Tower-functions-----------------------
 function turretUpgrade() {
   for (const tower of turrets) {
-    tower.damage = tower.damage * (tower.damage + tower.level / 2);
+    tower.attackSpeed = TURRET_OPTIONS[tower];
+    tower.damage;
+    tower.range;
+    tower.bulletCount;
+    tower.fireDamage;
+    tower.looting;
   }
 }
 
@@ -540,34 +553,36 @@ function leastHealth() {
 
 function towerAttack() {
   for (const tower of turrets) {
-    if (enemies.length) {
-      let targetEnemy = -1;
-      if (tower.targetType === 'first') {
-        targetEnemy = mostDistance();
-      } else if (tower.targetType === 'close') {
-        targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-      } else if (tower.targetType === 'mostHealth') {
-        targetEnemy = mostHealth();
-      } else if (tower.targetType === 'leastHealth') {
-        targetEnemy = leastHealth();
-      } else {
-        targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-      }
-      const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
-      if (distance <= tower.range ** 2) {
-        if (targetEnemy !== -1) {
-          enemies[targetEnemy].health -= Math.ceil(tower.damage);
-          console.log(tower, tower.dealtDamage);
-          tower.dealtDamage += Math.ceil(tower.damage);
+    if (gameTicks % (TICKS_PER_SECOND / tower.attackSpeed) <= 1) {
+      if (enemies.length) {
+        let targetEnemy = -1;
+        if (tower.targetType === 'first') {
+          targetEnemy = mostDistance();
+        } else if (tower.targetType === 'close') {
+          targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+        } else if (tower.targetType === 'mostHealth') {
+          targetEnemy = mostHealth();
+        } else if (tower.targetType === 'leastHealth') {
+          targetEnemy = leastHealth();
+        } else {
+          targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
         }
-        console.log(tower.damage);
-        if (enemies[targetEnemy].health < 1) {
-          player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2;
-          player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-          player.money = Math.floor(player.money);
-          enemies.splice(targetEnemy, 1);
+        const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
+        if (distance <= tower.range ** 2) {
+          if (targetEnemy !== -1) {
+            enemies[targetEnemy].health -= Math.ceil(tower.damage);
+            console.log(tower, tower.dealtDamage);
+            tower.dealtDamage += Math.ceil(tower.damage);
+          }
+          console.log(tower.damage);
+          if (enemies[targetEnemy].health < 1) {
+            player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2;
+            player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
+            player.money = Math.floor(player.money);
+            enemies.splice(targetEnemy, 1);
+          }
+          targetEnemy = -1;
         }
-        targetEnemy = -1;
       }
     }
   }
@@ -665,9 +680,11 @@ function placeTower(indexX: number, indexY: number) {
       posX: indexToPixel(indexX),
       posY: indexToPixel(indexY),
       type: selectedTurret,
-      level: 1,
-      dealtDamage: 0,
+      dealtDamage: 1,
       targetType: 'first',
+      attackSpeed: 1,
+      bulletCount: 1,
+      looting: 0,
     });
     selectedTurret = null;
     renderShop();
