@@ -472,7 +472,7 @@ function turretUpgrade() {
     tower.attackSpeed = TURRET_OPTIONS[tower];
     tower.damage;
     tower.range;
-    tower.bulletCount;
+    tower.multishot;
     tower.fireDamage;
     tower.looting;
   }
@@ -643,6 +643,18 @@ function openTowerMenu(x: number, y: number, tower: Turret) {
     towerMenuObject1.onclick = () => {};
     const towerMenuObject2 = document.querySelector('#towerObject2') as HTMLElement;
     towerMenuObject2.onclick = () => {};
+    const towerMenuObject9 = document.querySelector('#towerObject9') as HTMLElement;
+    towerMenuObject9.onclick = () => {};
+    const towerMenuObject10 = document.querySelector('#towerObject10') as HTMLElement;
+    towerMenuObject10.onclick = () => {};
+    const towerMenuObject11 = document.querySelector('#towerObject11') as HTMLElement;
+    towerMenuObject11.onclick = () => {};
+    const towerMenuObject12 = document.querySelector('#towerObject12') as HTMLElement;
+    towerMenuObject12.onclick = () => {};
+    const towerMenuObject13 = document.querySelector('#towerObject13') as HTMLElement;
+    towerMenuObject13.onclick = () => {};
+    const towerMenuObject14 = document.querySelector('#towerObject14') as HTMLElement;
+    towerMenuObject14.onclick = () => {};
     const towerMenuObject4 = document.querySelector('#towerObject4') as HTMLElement;
     towerMenuObject4.onclick = () => {
       tower.targetType = 'first';
