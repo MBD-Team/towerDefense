@@ -110,7 +110,7 @@ const ENEMY_OPTIONS = {
     health: 1,
     maxHealth: 1,
     strength: 1,
-    speed: 4,
+    speed: 3,
   },
 };
 
@@ -401,20 +401,33 @@ function pixelToIndex(index: number) {
 //-------------------Enemy-functions-----------------------
 function enemyMove() {
   for (const enemy of enemies) {
-    if (pixelToIndex(enemy.posX) === path[enemy.pathPosition + 1].positionX && pixelToIndex(enemy.posY) === path[enemy.pathPosition + 1].positionY) {
+    if (
+      //is the enemy already on the position that he is told to be ?
+      pixelToIndex(enemy.posX) === Math.ceil(path[enemy.pathPosition + 1].positionX) &&
+      pixelToIndex(enemy.posY) === Math.ceil(path[enemy.pathPosition + 1].positionY)
+    ) {
       enemy.pathPosition++;
-    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
-      enemy.posX -= enemy.speed;
-      enemy.walkedPixels += enemy.speed;
-    } else if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
-      enemy.posX += enemy.speed;
-      enemy.walkedPixels += enemy.speed;
-    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
-      enemy.posY -= enemy.speed;
-      enemy.walkedPixels += enemy.speed;
-    } else if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
-      enemy.posY += enemy.speed;
-      enemy.walkedPixels += enemy.speed;
+    } else {
+      //NORTH---------------------------------------------------------------------
+      if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
+        enemy.posY -= enemy.speed;
+        enemy.walkedPixels += enemy.speed;
+      }
+      //EAST----------------------------------------------------------------------
+      if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
+        enemy.posX += enemy.speed;
+        enemy.walkedPixels += enemy.speed;
+      }
+      //SOUTH---------------------------------------------------------------------
+      if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
+        enemy.posY += enemy.speed;
+        enemy.walkedPixels += enemy.speed;
+      }
+      //WEST----------------------------------------------------------------------
+      if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
+        enemy.posX -= enemy.speed;
+        enemy.walkedPixels += enemy.speed;
+      }
     }
     if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
       enemy.posX = indexToPixel(path[0].positionX);
@@ -430,7 +443,6 @@ function waveGeneration() {
     waveCount++;
     let waveStrength = waveCount * 10 + waveCount ** 2 * 0.5;
     let mobCount = 0;
-    console.log(waveCount, waveStrength);
     while (waveStrength >= 0) {
       mobCount++;
       const random = Math.random() * 100;
@@ -570,10 +582,8 @@ function towerAttack() {
         if (distance <= tower.range ** 2) {
           if (targetEnemy !== -1) {
             enemies[targetEnemy].health -= Math.ceil(tower.damage);
-            console.log(tower, tower.dealtDamage);
             tower.dealtDamage += Math.ceil(tower.damage);
           }
-          console.log(tower.damage);
           if (enemies[targetEnemy].health < 1) {
             player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2;
             player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
