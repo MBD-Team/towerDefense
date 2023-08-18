@@ -164,6 +164,7 @@ h1 {
   position: absolute;
   z-index: 1;
   transform: translate(-50%, -50%);
+  border: 1px solid black;
 }
 .towerMenuStyles {
   display: flex;
