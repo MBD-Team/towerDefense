@@ -142,6 +142,7 @@ function gameLoop() {
   gameTicks++;
   if (gameTicks % 24 === 0) {
     towerAttack();
+    renderWaveStats();
   }
   if (gameTicks % (24 * 30) === 0) {
     waveGeneration();
@@ -231,6 +232,12 @@ function renderRange(tower: Turret) {
   }
 }
 
+function renderWaveStats() {
+  const showWave = document.querySelector('.wave') as HTMLSpanElement;
+  const remainingEnemies = document.querySelector('.remainingEnemies') as HTMLSpanElement;
+  showWave.innerHTML = `Wave: ${waveCount}`;
+  remainingEnemies.innerHTML = `Remaining enemies: ${enemies.length}`;
+}
 //------------------------Create---------------------------
 function createMap() {
   for (let x = 0; x < gameSizeX; x++) {
@@ -561,6 +568,7 @@ function sellTower(xIndex: number, yIndex: number) {
   player.money += TURRET_OPTIONS[turrets[turretIndex].type].cost * 0.7;
   turrets.splice(turretIndex, 1);
   renderTurret();
+  renderShop();
 }
 
 function renderShop() {
@@ -650,6 +658,7 @@ function placeTower(indexX: number, indexY: number) {
       dealtDamage: 0,
       targetType: 'first',
     });
+    selectedTurret = null;
     renderShop();
     renderTurret();
   }
