@@ -521,7 +521,6 @@ function leastHealth() {
 }
 
 function towerAttack() {
-  let targetType: number;
   for (const tower of turrets) {
     if (enemies.length) {
       let targetEnemy = null;
