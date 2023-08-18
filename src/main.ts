@@ -25,6 +25,7 @@ type Turret = {
   level: number;
   cost: number;
   damage: number;
+  dealtDamage: number;
   posX: number;
   posY: number;
   range: number;
@@ -121,7 +122,7 @@ function game() {
   renderMap();
   renderShop();
   waveGeneration();
-  interval = setInterval(gameLoop, 1000 / 48);
+  interval = setInterval(gameLoop, 1000 / 24);
 }
 
 function reset() {
@@ -355,7 +356,7 @@ function playerXP() {
       player.level++;
     }
   }
-  if (player.level <= 30) {
+  if (player.level >= 30) {
     if (player.exp >= player.level * 9 + 7) {
       player.exp -= player.level * 9 + 7;
       player.level++;
@@ -523,7 +524,7 @@ function leastHealth() {
 function towerAttack() {
   for (const tower of turrets) {
     if (enemies.length) {
-      let targetEnemy = null;
+      let targetEnemy = -1;
       if (tower.targetType === 'first') {
         targetEnemy = mostDistance();
       } else if (tower.targetType === 'close') {
@@ -536,10 +537,11 @@ function towerAttack() {
         targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
       }
       const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
-
       if (distance <= tower.range ** 2) {
         if (targetEnemy !== -1) {
           enemies[targetEnemy].health -= Math.ceil(tower.damage);
+          console.log(tower, tower.dealtDamage);
+          tower.dealtDamage += Math.ceil(tower.damage);
         }
         console.log(tower.damage);
         if (enemies[targetEnemy].health < 1) {
@@ -645,6 +647,7 @@ function placeTower(indexX: number, indexY: number) {
       posY: indexToPixel(indexY),
       type: selectedTurret,
       level: 1,
+      dealtDamage: 0,
       targetType: 'first',
     });
     renderShop();
