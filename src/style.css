@@ -160,7 +160,6 @@ h1 {
 .turret {
   width: 64px;
   height: 64px;
-  background-image: url(/mc-dispender.png);
   object-fit: cover;
   position: absolute;
   z-index: 1;
@@ -171,6 +170,22 @@ h1 {
   justify-content: space-between;
   flex-direction: column;
 }
+.placeTurrets {
+  height: 704px;
+  width: 320px;
+  border: 3px solid black;
+  position: fixed;
+  right: 15px;
+  bottom: 36px;
+}
+/* -----------towers-types--------- */
+.dispenser{
+  background-image: url(/mc-dispender.png);
+}
+.ironGolem{
+  background-image: url(/mc-IronGolem.png);
+}
+
 
 /* --------------enemy---------- */
 .enemy {
@@ -203,14 +218,6 @@ h1 {
   background-image: url(/enemy/mc-enderman.png);
 }
 
-.placeTurrets {
-  height: 704px;
-  width: 320px;
-  border: 3px solid black;
-  position: fixed;
-  right: 15px;
-  bottom: 36px;
-}
 
 dl {
   font-size: 2rem;
