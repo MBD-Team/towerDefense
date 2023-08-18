@@ -302,7 +302,7 @@ function createPath() {
       }
     }
   }
-  if (path.length < 80) {
+  if (path.length < 85) {
     path.splice(0);
     createPath();
   }
