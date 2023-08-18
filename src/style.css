@@ -34,6 +34,10 @@ h1 {
   align-items: center;
   justify-content: center;
 }
+.tile:hover{
+  filter:grayscale(0.4);
+  border: 1px solid rgb(41, 41, 41)
+}
 
 .tower {
   /* border: 1px solid black; */

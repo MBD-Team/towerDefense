@@ -169,6 +169,7 @@ function renderMap() {
       tile.onclick = () => {
         placeTower(x, y);
       };
+
       if (path.at(-1)?.positionX === x && path.at(-1)?.positionY === y) {
         tile.classList.add('playerBase');
       }
