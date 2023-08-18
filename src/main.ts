@@ -28,7 +28,7 @@ type Turret = {
   posX: number;
   posY: number;
   range: number;
-  target: TargetTypes;
+  targetType: TargetTypes;
 };
 /** @description position as Index */
 const path: {
@@ -524,32 +524,30 @@ function towerAttack() {
   let targetType: number;
   for (const tower of turrets) {
     if (enemies.length) {
-      let targetEnemy = -1;
-      for (let i = 0; i < enemies.length; i++) {
-        const distance = (tower.posX - enemies[i].posX) ** 2 + (tower.posY - enemies[i].posY) ** 2;
-        if (distance <= tower.range ** 2) {
-          if (tower.target === 'first') {
-            targetEnemy = mostDistance();
-          } else if (tower.target === 'close') {
-            targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-          } else if (tower.target === 'mostHealth') {
-            targetEnemy = mostHealth();
-          } else if (tower.target === 'leastHealth') {
-            targetEnemy = leastHealth();
-          } else {
-            targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-          }
-          if (targetEnemy !== -1) {
-            const enemy = enemies[targetEnemy];
-            enemies[targetEnemy].health -= Math.ceil(tower.damage);
-          }
-          console.log(tower.damage);
-          if (enemies[targetEnemy].health < 1) {
-            player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2;
-            player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-            player.money = Math.floor(player.money);
-            enemies.splice(targetEnemy, 1);
-          }
+      let targetEnemy = null;
+      if (tower.targetType === 'first') {
+        targetEnemy = mostDistance();
+      } else if (tower.targetType === 'close') {
+        targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+      } else if (tower.targetType === 'mostHealth') {
+        targetEnemy = mostHealth();
+      } else if (tower.targetType === 'leastHealth') {
+        targetEnemy = leastHealth();
+      } else {
+        targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+      }
+      const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
+
+      if (distance <= tower.range ** 2) {
+        if (targetEnemy !== -1) {
+          enemies[targetEnemy].health -= Math.ceil(tower.damage);
+        }
+        console.log(tower.damage);
+        if (enemies[targetEnemy].health < 1) {
+          player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2;
+          player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
+          player.money = Math.floor(player.money);
+          enemies.splice(targetEnemy, 1);
         }
       }
     }
@@ -607,23 +605,23 @@ function openTowerMenu(x: number, y: number, tower: Turret) {
     towerMenuObject2.onclick = () => {};
     const towerMenuObject4 = document.querySelector('#towerObject4') as HTMLElement;
     towerMenuObject4.onclick = () => {
-      tower.target = 'first';
+      tower.targetType = 'first';
     };
     const towerMenuObject5 = document.querySelector('#towerObject5') as HTMLElement;
     towerMenuObject5.onclick = () => {
-      tower.target = 'mostHealth';
+      tower.targetType = 'mostHealth';
     };
     const towerMenuObject6 = document.querySelector('#towerObject6') as HTMLElement;
     towerMenuObject6.onclick = () => {
-      tower.target = 'close';
+      tower.targetType = 'close';
     };
     const towerMenuObject7 = document.querySelector('#towerObject7') as HTMLElement;
     towerMenuObject7.onclick = () => {
-      tower.target = 'furthest';
+      tower.targetType = 'furthest';
     };
     const towerMenuObject8 = document.querySelector('#towerObject8') as HTMLDivElement;
     towerMenuObject8.onclick = () => {
-      tower.target = 'leastHealth';
+      tower.targetType = 'leastHealth';
     };
     const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLElement;
     towerMenuObject3.onclick = () => {
@@ -644,7 +642,7 @@ function placeTower(indexX: number, indexY: number) {
       posY: indexToPixel(indexY),
       type: selectedTurret,
       level: 1,
-      target: 'first',
+      targetType: 'first',
     });
     renderShop();
     renderTurret();
