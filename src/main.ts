@@ -121,6 +121,7 @@ function game() {
   createPath();
   renderMap();
   renderShop();
+  // openTowerMenu();
   waveGeneration();
   interval = setInterval(gameLoop, 1000 / 24);
 }
@@ -618,7 +619,7 @@ function renderShop() {
 }
 
 function openTowerMenu(x: number, y: number, tower: Turret) {
-  const menuItem = document.querySelectorAll('.menuItem');
+  const menuItem = document.querySelectorAll<HTMLElement>('.menuItem');
   menuItem.forEach(a => {
     a.setAttribute('style', 'background-color:#0000005d');
   });

@@ -246,6 +246,7 @@ span {
   display: flex;
   align-items: center;
   cursor: pointer;
+  background-color:#0000005d;
 }
 
 .towerMenu {
