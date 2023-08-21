@@ -139,11 +139,11 @@ const selectedTower: Tower = {
   currentDamage: () => 0,
   currentRange: () => 0,
   upgrades: {
-    damageLevel: 0,
-    attackSpeedLevel: 0,
-    lootingLevel: 0,
-    multishotLevel: 0,
-    rangeLevel: 0,
+    damageLevel: 1,
+    attackSpeedLevel: 1,
+    lootingLevel: 1,
+    multishotLevel: 1,
+    rangeLevel: 1,
   },
 };
 //-------------------------Game---------------------------
@@ -677,7 +677,13 @@ function openTowerMenu(x: number, y: number, tower: Tower) {
     a.setAttribute('style', 'background-color:#0000005d');
   });
   for (const stat of ['damage', 'attackSpeed', 'range', 'multishot', 'looting'] as const) {
-    (document.querySelector('#' + stat) as HTMLElement).onclick = () => tower.upgrades[`${stat}Level`]++;
+    (document.querySelector('#' + stat) as HTMLElement).onclick = () => {
+      if (player.level >= tower.upgrades[`${stat}Level`]) {
+        player.level -= tower.upgrades[`${stat}Level`];
+        tower.upgrades[`${stat}Level`]++;
+        renderRange(tower);
+      }
+    };
   }
   const towerMenuObject7 = document.querySelector('#towerObject7 ') as HTMLElement;
   towerMenuObject7.onclick = () => {
@@ -729,11 +735,11 @@ function placeTower(indexX: number, indexY: number) {
         return this.range + this.upgrades.rangeLevel * this.range * 0.1;
       },
       upgrades: {
-        attackSpeedLevel: 0,
-        damageLevel: 0,
-        lootingLevel: 0,
-        multishotLevel: 0,
-        rangeLevel: 0,
+        attackSpeedLevel: 1,
+        damageLevel: 1,
+        lootingLevel: 1,
+        multishotLevel: 1,
+        rangeLevel: 1,
       },
     });
     selectedTower.type = null;
