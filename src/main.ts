@@ -156,9 +156,7 @@ const tryToPlay = setInterval(() => {
     .then(() => {
       clearInterval(tryToPlay);
     })
-    .catch(error => {
-      console.info('User has not interacted with document yet.');
-    });
+    .catch(error => {});
 }, 1000);
 
 //--------------------Game-Functions-----------------------
@@ -501,21 +499,6 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
 }
 //-------------------Tower-functions-----------------------
 
-function closestRange(towerX: number, towerY: number) {
-  let closesEnemy = 0;
-  let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
-  let enemyDistance = null;
-
-  for (let i = 0; i < enemies.length; i++) {
-    enemyDistance = Math.sqrt(Math.pow(towerX - enemies[i].posX, 2) + Math.pow(towerY - enemies[i].posY, 2));
-    if (enemyDistance < closestEnemyDistance) {
-      closestEnemyDistance = enemyDistance;
-      closesEnemy = i;
-    }
-  }
-  return closesEnemy;
-}
-
 function furthestRange(towerX: number, towerY: number) {
   let closesEnemy = 0;
   let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
@@ -529,36 +512,6 @@ function furthestRange(towerX: number, towerY: number) {
     }
   }
   return closesEnemy;
-}
-
-function mostDistance() {
-  let firstEnemy = 0;
-  let mostEnemyDistance = 0;
-  let enemyDistance = 0;
-
-  for (let i = 0; i < enemies.length; i++) {
-    enemyDistance = enemies[i].walkedPixels;
-    if (enemyDistance > mostEnemyDistance) {
-      mostEnemyDistance = enemyDistance;
-      firstEnemy = i;
-    }
-  }
-
-  return firstEnemy;
-}
-
-function mostHealth() {
-  let mostHealthyEnemy = 0;
-  let mostHealthyEnemyHealth = (gameSizeX * gameSizeY) / 2;
-  let enemyHealth = 0;
-  for (let i = 0; i < enemies.length; i++) {
-    enemyHealth = enemies[i].maxHealth;
-    if (enemyHealth > mostHealthyEnemyHealth) {
-      mostHealthyEnemyHealth = enemyHealth;
-      mostHealthyEnemy = i;
-    }
-  }
-  return mostHealthyEnemy;
 }
 
 function leastHealth() {
@@ -575,51 +528,91 @@ function leastHealth() {
   return leastHealthyEnemy;
 }
 function getDistance(e1: { posX: number; posY: number }, e2: { posX: number; posY: number }) {
-  const distance = Math.sqrt(e1.posX - e2.posX) ** 2 + (e1.posY - e2.posY) ** 2;
+  const distance = Math.sqrt((e1.posX - e2.posX) ** 2 + (e1.posY - e2.posY) ** 2);
   return distance;
 }
 
 function towerAttack() {
   for (const tower of towers) {
-    if (gameTicks % (TICKS_PER_SECOND / (tower.attackSpeed + tower.upgrades.attackSpeedLevel * 0.1)) <= 1) {
-      if (enemies.length) {
-        let targetEnemy = -1;
-        if (tower.targetType === 'first') {
-          targetEnemy = mostDistance();
-        } else if (tower.targetType === 'close') {
-          targetEnemy = closestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-        } else if (tower.targetType === 'mostHealth') {
-          targetEnemy = mostHealth();
-        } else if (tower.targetType === 'leastHealth') {
-          targetEnemy = leastHealth();
-        } else {
-          targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+    if (gameTicks % (TICKS_PER_SECOND / (tower.attackSpeed + tower.upgrades.attackSpeedLevel * 0.1)) <= 1 && enemies.length) {
+      let targetEnemy = -1;
+      //-------------------------------------
+      if (tower.targetType === 'first') {
+        let firstEnemy = 0;
+        let mostEnemyDistance = 0;
+        let enemyDistance = 0;
+        for (const enemy of enemies) {
+          firstEnemy++;
+          if (getDistance(tower, enemy) <= tower.currentRange() ** 2) {
+            enemyDistance = enemy.walkedPixels;
+            if (enemyDistance > mostEnemyDistance) {
+              mostEnemyDistance = enemyDistance;
+            }
+          }
+          targetEnemy = firstEnemy;
         }
+      }
+      //-------------------------------------
+      if (tower.targetType === 'close') {
+        let closesEnemy = 0;
+        let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
+        let enemyDistance = null;
+        for (const enemy of enemies) {
+          closesEnemy++;
+          if (getDistance(tower, enemy) <= tower.currentRange() ** 2) {
+            enemyDistance = Math.sqrt(Math.pow(tower.posX - enemy.posX, 2) + Math.pow(tower.posY - enemy.posY, 2));
+            if (enemyDistance < closestEnemyDistance) {
+              closestEnemyDistance = enemyDistance;
+            }
+          }
+          targetEnemy = closesEnemy;
+        }
+      }
+      //-------------------------------------
+      if (tower.targetType === 'mostHealth') {
+        let mostHealthyEnemy = 0;
+        let mostHealthyEnemyHealth = 0;
+        let enemyHealth = 0;
+        for (const enemy of enemies) {
+          mostHealthyEnemy++;
+          if (getDistance(tower, enemy) <= tower.currentRange() ** 2) {
+            enemyHealth = enemy.maxHealth;
+            if (enemyHealth > mostHealthyEnemyHealth) {
+              mostHealthyEnemyHealth = enemyHealth;
+            }
+          }
+          targetEnemy = mostHealthyEnemy;
+        }
+      }
+      if (tower.targetType === 'leastHealth') {
+        targetEnemy = leastHealth();
+      } else {
+        targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
+      }
 
-        const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
-        if (distance <= tower.currentRange() ** 2) {
-          if (targetEnemy !== -1) {
-            const multishotRate = 0.2 * tower.upgrades.multishotLevel;
-            let multishotValue = 0;
-            const random = Math.random();
-            if (multishotRate > 1) {
-              multishotValue = Math.floor(multishotRate);
-            }
-            if (random <= multishotRate % 1) {
-              multishotValue += 1;
-            }
-            const towerDamage = tower.currentDamage() * (multishotValue + 1);
-            enemies[targetEnemy].health -= Math.ceil(towerDamage);
-            tower.dealtDamage += Math.ceil(towerDamage);
+      const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
+      if (distance <= tower.currentRange() ** 2) {
+        if (targetEnemy !== -1) {
+          const multishotRate = 0.2 * tower.upgrades.multishotLevel;
+          let multishotValue = 0;
+          const random = Math.random();
+          if (multishotRate > 1) {
+            multishotValue = Math.floor(multishotRate);
           }
-          if (enemies[targetEnemy].health < 1) {
-            player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2 * (1 + tower.upgrades.lootingLevel / 10);
-            player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-            player.money = Math.floor(player.money);
-            enemies.splice(targetEnemy, 1);
+          if (random <= multishotRate % 1) {
+            multishotValue += 1;
           }
-          targetEnemy = -1;
+          const towerDamage = tower.currentDamage() * (multishotValue + 1);
+          enemies[targetEnemy].health -= Math.ceil(towerDamage);
+          tower.dealtDamage += Math.ceil(towerDamage);
         }
+        if (enemies[targetEnemy].health < 1) {
+          player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2 * (1 + tower.upgrades.lootingLevel / 10);
+          player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
+          player.money = Math.floor(player.money);
+          enemies.splice(targetEnemy, 1);
+        }
+        targetEnemy = -1;
       }
     }
   }
