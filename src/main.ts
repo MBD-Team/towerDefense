@@ -402,19 +402,18 @@ function pixelToIndex(index: number) {
 function enemyMove() {
   for (let i = 0; i < enemies.length; i++) {
     enemies[i].pathPosition = Math.floor(enemies[i].walkedPixels / 64);
-    const pathDifferenceX = path[enemies[i].pathPosition + 1]?.positionX - path[enemies[i].pathPosition]?.positionX;
-    const pathDifferenceY = path[enemies[i].pathPosition + 1]?.positionY - path[enemies[i].pathPosition]?.positionY;
-
-    enemies[i].posY += pathDifferenceY * enemies[i].speed;
-    enemies[i].posX += pathDifferenceX * enemies[i].speed;
-    enemies[i].walkedPixels += enemies[i].speed;
-    if (enemies[i].walkedPixels >= path.length * 64) {
-      playerDamage(1);
+    if (path[enemies[i].pathPosition + 1]) {
+      const pathDifferenceX = path[enemies[i].pathPosition + 1]?.positionX - path[enemies[i].pathPosition]?.positionX;
+      const pathDifferenceY = path[enemies[i].pathPosition + 1]?.positionY - path[enemies[i].pathPosition]?.positionY;
+      enemies[i].posY += pathDifferenceY * enemies[i].speed * 5;
+      enemies[i].posX += pathDifferenceX * enemies[i].speed * 5;
+      enemies[i].walkedPixels += enemies[i].speed * 5;
+    } else {
       enemies.splice(i, 1);
+      playerDamage(1);
     }
   }
 }
-
 function waveGeneration() {
   if (gameTicks % (TICKS_PER_SECOND * 30) === 0) {
     waveCount++;
