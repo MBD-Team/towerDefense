@@ -157,7 +157,7 @@ h1 {
 }
 
 /* --------------towers---------- */
-.turret {
+.tower {
   width: 64px;
   height: 64px;
   object-fit: cover;
@@ -171,7 +171,7 @@ h1 {
   justify-content: space-between;
   flex-direction: column;
 }
-.placeTurrets {
+.placeTowers {
   height: 704px;
   width: 320px;
   border: 3px solid black;
@@ -266,7 +266,7 @@ span {
   bottom: 36px;
 }
 
-.turretCost{
+.towerCost{
   text-decoration: underline;
 }
 
