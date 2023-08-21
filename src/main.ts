@@ -405,9 +405,9 @@ function enemyMove() {
     if (path[enemies[i].pathPosition + 1]) {
       const pathDifferenceX = path[enemies[i].pathPosition + 1]?.positionX - path[enemies[i].pathPosition]?.positionX;
       const pathDifferenceY = path[enemies[i].pathPosition + 1]?.positionY - path[enemies[i].pathPosition]?.positionY;
-      enemies[i].posY += pathDifferenceY * enemies[i].speed * 5;
-      enemies[i].posX += pathDifferenceX * enemies[i].speed * 5;
-      enemies[i].walkedPixels += enemies[i].speed * 5;
+      enemies[i].posY += pathDifferenceY * enemies[i].speed;
+      enemies[i].posX += pathDifferenceX * enemies[i].speed;
+      enemies[i].walkedPixels += enemies[i].speed;
     } else {
       enemies.splice(i, 1);
       playerDamage(1);
