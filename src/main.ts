@@ -32,6 +32,15 @@ type Tower = {
   attackSpeed: number;
   multishot: number;
   looting: number;
+  currentDamage: () => number;
+  currentRange: () => number;
+  upgrades: {
+    damageLevel: number;
+    attackSpeedLevel: number;
+    rangeLevel: number;
+    multishotLevel: number;
+    lootingLevel: number;
+  };
 };
 /** @description position as Index */
 const path: {
@@ -118,15 +127,24 @@ const gameMap: GameTile[][] = [];
 const selectedTower: Tower = {
   type: null,
   cost: 0,
-  damage: 0,
+  damage: 1,
   dealtDamage: 0,
   posX: 0,
   posY: 0,
-  range: 0,
+  range: 1,
   targetType: 'first',
-  attackSpeed: 0,
-  multishot: 0,
-  looting: 0,
+  attackSpeed: 1,
+  multishot: 1,
+  looting: 1,
+  currentDamage: () => 0,
+  currentRange: () => 0,
+  upgrades: {
+    damageLevel: 0,
+    attackSpeedLevel: 0,
+    lootingLevel: 0,
+    multishotLevel: 0,
+    rangeLevel: 0,
+  },
 };
 //-------------------------Game---------------------------
 
@@ -247,12 +265,13 @@ function renderEnemy() {
 
 function renderRange(tower: Tower) {
   if (!document.querySelector('.range')) {
+    const towerRange = tower.currentRange();
     const rangeDiv = document.createElement('div');
     rangeDiv.setAttribute(
       'style',
       `border-radius:50%; background-color:rgba(255,0,0,0.1);
     top:${tower.posY}px; left:${tower.posX}px;
-    width: ${tower.range * 2}px; height: ${tower.range * 2}px;
+    width: ${towerRange * 2}px; height: ${towerRange * 2}px;
     position:absolute;transform: translate(-50%,-50%);
     border: 1px solid red;
     box-sizing:border-box;
@@ -562,7 +581,7 @@ function getDistance(e1: { posX: number; posY: number }, e2: { posX: number; pos
 
 function towerAttack() {
   for (const tower of towers) {
-    if (gameTicks % (TICKS_PER_SECOND / tower.attackSpeed) <= 1) {
+    if (gameTicks % (TICKS_PER_SECOND / (tower.attackSpeed + tower.upgrades.attackSpeedLevel * 0.1)) <= 1) {
       if (enemies.length) {
         let targetEnemy = -1;
         if (tower.targetType === 'first') {
@@ -578,13 +597,23 @@ function towerAttack() {
         }
 
         const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
-        if (distance <= tower.range ** 2) {
+        if (distance <= tower.currentRange() ** 2) {
           if (targetEnemy !== -1) {
-            enemies[targetEnemy].health -= Math.ceil(tower.damage);
-            tower.dealtDamage += Math.ceil(tower.damage);
+            const multishotRate = 0.2 * tower.upgrades.multishotLevel;
+            let multishotValue = 0;
+            const random = Math.random();
+            if (multishotRate > 1) {
+              multishotValue = Math.floor(multishotRate);
+            }
+            if (random <= multishotRate % 1) {
+              multishotValue += 1;
+            }
+            const towerDamage = tower.currentDamage() * (multishotValue + 1);
+            enemies[targetEnemy].health -= Math.ceil(towerDamage);
+            tower.dealtDamage += Math.ceil(towerDamage);
           }
           if (enemies[targetEnemy].health < 1) {
-            player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2;
+            player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2 * (1 + tower.upgrades.lootingLevel / 10);
             player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
             player.money = Math.floor(player.money);
             enemies.splice(targetEnemy, 1);
@@ -642,26 +671,13 @@ function renderShop() {
   };
 }
 
-function changeStat(stat: 'damage' | 'attackSpeed' | 'range' | 'multishot' | 'looting', tower: Tower): () => number {
-  if (stat === 'damage' || stat === 'attackSpeed') {
-    return () => (tower[stat] += 0.5);
-  }
-  if (stat === 'range') {
-    return () => (tower[stat] += 20);
-  }
-  if (stat === 'looting') {
-    return () => (tower[stat] += 1);
-  }
-  return () => tower[stat];
-}
-
 function openTowerMenu(x: number, y: number, tower: Tower) {
   const menuItem = document.querySelectorAll<HTMLElement>('.menuItem');
   menuItem.forEach(a => {
     a.setAttribute('style', 'background-color:#0000005d');
   });
   for (const stat of ['damage', 'attackSpeed', 'range', 'multishot', 'looting'] as const) {
-    (document.querySelector('#' + stat) as HTMLElement).onclick = changeStat(stat, tower);
+    (document.querySelector('#' + stat) as HTMLElement).onclick = () => tower.upgrades[`${stat}Level`]++;
   }
   const towerMenuObject7 = document.querySelector('#towerObject7 ') as HTMLElement;
   towerMenuObject7.onclick = () => {
@@ -706,6 +722,19 @@ function placeTower(indexX: number, indexY: number) {
       attackSpeed: 1,
       multishot: 1,
       looting: 0,
+      currentDamage: function () {
+        return this.damage + this.upgrades.damageLevel * 0.5;
+      },
+      currentRange: function () {
+        return this.range + this.upgrades.rangeLevel * this.range * 0.1;
+      },
+      upgrades: {
+        attackSpeedLevel: 0,
+        damageLevel: 0,
+        lootingLevel: 0,
+        multishotLevel: 0,
+        rangeLevel: 0,
+      },
     });
     selectedTower.type = null;
     renderShop();
