@@ -535,84 +535,75 @@ function getDistance(e1: { posX: number; posY: number }, e2: { posX: number; pos
 function towerAttack() {
   for (const tower of towers) {
     if (gameTicks % (TICKS_PER_SECOND / (tower.attackSpeed + tower.upgrades.attackSpeedLevel * 0.1)) <= 1 && enemies.length) {
-      let targetEnemy = -1;
-      //-------------------------------------
-      if (tower.targetType === 'first') {
-        let firstEnemy = 0;
-        let mostEnemyDistance = 0;
-        let enemyDistance = 0;
-        for (const enemy of enemies) {
-          firstEnemy++;
-          if (getDistance(tower, enemy) <= tower.currentRange() ** 2) {
-            enemyDistance = enemy.walkedPixels;
+      for (let i = 0; i < enemies.length; i++) {
+        if (getDistance(tower, enemies[i]) <= tower.currentRange() ** 2) {
+          let targetEnemy = -1;
+          //-------------------------------------
+          if (tower.targetType === 'first') {
+            let mostEnemyDistance = 0;
+            let enemyDistance = 0;
+            enemyDistance = enemies[i].walkedPixels;
             if (enemyDistance > mostEnemyDistance) {
               mostEnemyDistance = enemyDistance;
             }
+            targetEnemy = i;
           }
-          targetEnemy = firstEnemy;
-        }
-      }
-      //-------------------------------------
-      if (tower.targetType === 'close') {
-        let closesEnemy = 0;
-        let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
-        let enemyDistance = null;
-        for (const enemy of enemies) {
-          closesEnemy++;
-          if (getDistance(tower, enemy) <= tower.currentRange() ** 2) {
-            enemyDistance = Math.sqrt(Math.pow(tower.posX - enemy.posX, 2) + Math.pow(tower.posY - enemy.posY, 2));
+          //-------------------------------------
+          if (tower.targetType === 'close') {
+            let closesEnemy = 0;
+            let closestEnemyDistance = Math.sqrt(Math.pow(indexToPixel(gameSizeY), 2) + Math.pow(indexToPixel(gameSizeX), 2));
+            let enemyDistance = null;
+            closesEnemy++;
+            enemyDistance = Math.sqrt(Math.pow(tower.posX - enemies[i].posX, 2) + Math.pow(tower.posY - enemies[i].posY, 2));
             if (enemyDistance < closestEnemyDistance) {
               closestEnemyDistance = enemyDistance;
             }
+            targetEnemy = closesEnemy;
           }
-          targetEnemy = closesEnemy;
-        }
-      }
-      //-------------------------------------
-      if (tower.targetType === 'mostHealth') {
-        let mostHealthyEnemy = 0;
-        let mostHealthyEnemyHealth = 0;
-        let enemyHealth = 0;
-        for (const enemy of enemies) {
-          mostHealthyEnemy++;
-          if (getDistance(tower, enemy) <= tower.currentRange() ** 2) {
-            enemyHealth = enemy.maxHealth;
+          //-------------------------------------
+          if (tower.targetType === 'mostHealth') {
+            let mostHealthyEnemy = 0;
+            let mostHealthyEnemyHealth = 0;
+            let enemyHealth = 0;
+            mostHealthyEnemy++;
+            enemyHealth = enemies[i].maxHealth;
             if (enemyHealth > mostHealthyEnemyHealth) {
               mostHealthyEnemyHealth = enemyHealth;
             }
+            targetEnemy = mostHealthyEnemy;
           }
-          targetEnemy = mostHealthyEnemy;
-        }
-      }
-      if (tower.targetType === 'leastHealth') {
-        targetEnemy = leastHealth();
-      } else {
-        targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
-      }
 
-      const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
-      if (distance <= tower.currentRange() ** 2) {
-        if (targetEnemy !== -1) {
-          const multishotRate = 0.2 * tower.upgrades.multishotLevel;
-          let multishotValue = 0;
-          const random = Math.random();
-          if (multishotRate > 1) {
-            multishotValue = Math.floor(multishotRate);
+          if (tower.targetType === 'leastHealth') {
+            targetEnemy = leastHealth();
+          } else {
+            targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
           }
-          if (random <= multishotRate % 1) {
-            multishotValue += 1;
+
+          const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
+          if (distance <= tower.currentRange() ** 2) {
+            if (targetEnemy !== -1) {
+              const multishotRate = 0.2 * tower.upgrades.multishotLevel;
+              let multishotValue = 0;
+              const random = Math.random();
+              if (multishotRate > 1) {
+                multishotValue = Math.floor(multishotRate);
+              }
+              if (random <= multishotRate % 1) {
+                multishotValue += 1;
+              }
+              const towerDamage = tower.currentDamage() * (multishotValue + 1);
+              enemies[targetEnemy].health -= Math.ceil(towerDamage);
+              tower.dealtDamage += Math.ceil(towerDamage);
+            }
+            if (enemies[targetEnemy].health < 1) {
+              player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2 * (1 + tower.upgrades.lootingLevel / 10);
+              player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
+              player.money = Math.floor(player.money);
+              enemies.splice(targetEnemy, 1);
+            }
+            targetEnemy = -1;
           }
-          const towerDamage = tower.currentDamage() * (multishotValue + 1);
-          enemies[targetEnemy].health -= Math.ceil(towerDamage);
-          tower.dealtDamage += Math.ceil(towerDamage);
         }
-        if (enemies[targetEnemy].health < 1) {
-          player.money += ENEMY_OPTIONS[enemies[targetEnemy].type].strength * 2 * (1 + tower.upgrades.lootingLevel / 10);
-          player.exp += ENEMY_OPTIONS[enemies[targetEnemy].type].strength;
-          player.money = Math.floor(player.money);
-          enemies.splice(targetEnemy, 1);
-        }
-        targetEnemy = -1;
       }
     }
   }
