@@ -417,7 +417,7 @@ function enemyMove() {
 function waveGeneration() {
   if (gameTicks % (TICKS_PER_SECOND * 30) === 0) {
     waveCount++;
-    let waveStrength = 1; /*waveCount * 10 + waveCount ** 2 * 0.5;*/
+    let waveStrength = waveCount * 10 + waveCount ** 2 * 0.5;
     let mobCount = 0;
     while (waveStrength >= 0) {
       mobCount++;
@@ -429,7 +429,7 @@ function waveGeneration() {
         waveStrength -= spawnEnemy('zombie', mobCount);
       } else if (random <= 70 && random > 50) {
         waveStrength -= spawnEnemy('skeleton', mobCount);
-      } else if (random <= 85 && random > 0) {
+      } else if (random <= 85 && random > 70) {
         waveStrength -= spawnEnemy('bat', mobCount);
       } else {
         waveStrength -= spawnEnemy('spider', mobCount);
