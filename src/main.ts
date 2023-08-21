@@ -555,6 +555,10 @@ function leastHealth() {
   }
   return leastHealthyEnemy;
 }
+function getDistance(e1: { posX: number; posY: number }, e2: { posX: number; posY: number }) {
+  const distance = Math.sqrt(e1.posX - e2.posX) ** 2 + (e1.posY - e2.posY) ** 2;
+  return distance;
+}
 
 function towerAttack() {
   for (const tower of towers) {
@@ -572,6 +576,7 @@ function towerAttack() {
         } else {
           targetEnemy = furthestRange(indexToPixel(tower.posX), indexToPixel(tower.posY));
         }
+
         const distance = (tower.posX - enemies[targetEnemy].posX) ** 2 + (tower.posY - enemies[targetEnemy].posY) ** 2;
         if (distance <= tower.range ** 2) {
           if (targetEnemy !== -1) {
