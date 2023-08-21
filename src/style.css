@@ -11,8 +11,6 @@ body {
   margin: 0;
   background-image: url(/mc-dirt.png);
   overflow:hidden
-  /* background- */
-  /* filter:saturate(0.5) */
 }
 h1 {
   font-size: 8vh;
@@ -25,7 +23,6 @@ h1 {
 }
 
 .tile {
-  background-image: url(/mc-grass.png);
   object-fit: cover;
   box-sizing: border-box;
   width: 64px;
@@ -38,22 +35,17 @@ h1 {
   filter:grayscale(0.4);
   border: 1px solid rgb(41, 41, 41)
 }
-
-.tower {
-  /* border: 1px solid black; */
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-image: url(/mc-dispender.png);
-  object-fit: cover;
+.vanilla_background{
+  background-image: url(/mc-grass.png);
 }
-.path {
+.nether_background{
+  background-image: url(/mc-souldand.png);
+}
+.vanilla_path {
   background-image: url(/mc-sand.png);
-  object-fit: cover;
-  width: 64px;
-  height: 64px;
+}
+.nether_path {
+  background-image: url(/mc-netherrack.png);
 }
 
 .enemyBase {
@@ -157,6 +149,16 @@ h1 {
 }
 
 /* --------------towers---------- */
+.tower {
+  /* border: 1px solid black; */
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url(/mc-dispender.png);
+  object-fit: cover;
+}
 .tower {
   width: 64px;
   height: 64px;
