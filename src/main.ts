@@ -49,6 +49,7 @@ const gameSizeX = 19;
 const gameSizeY = 11;
 let waveCount = 0;
 const TICKS_PER_SECOND = 24;
+const biome: 'vanilla' | 'nether' = 'vanilla';
 const hearths20 = document.querySelector('.hearths20');
 const expFull = document.querySelector('.expFull');
 
@@ -130,6 +131,17 @@ const selectedTower: Tower = {
 //-------------------------Game---------------------------
 
 game();
+const tryToPlay = setInterval(() => {
+  const audio = document.getElementById('player') as HTMLAudioElement;
+  audio
+    .play()
+    .then(() => {
+      clearInterval(tryToPlay);
+    })
+    .catch(error => {
+      console.info('User has not interacted with document yet.');
+    });
+}, 1000);
 
 //--------------------Game-Functions-----------------------
 function game() {
@@ -182,6 +194,7 @@ function renderMap() {
     for (let x = 0; x < gameSizeX; x++) {
       const tile = document.createElement('div');
       tile.className = 'tile';
+      tile.classList.add('tile', biome + '_background');
       tile.onclick = () => {
         placeTower(x, y);
       };
@@ -193,7 +206,7 @@ function renderMap() {
         tile.classList.add('enemyBase');
       }
       if (path.find(a => a.positionX === x && a.positionY === y)) {
-        tile.classList.add('path');
+        tile.classList.add(biome + '_path');
       }
       gameField?.appendChild(tile);
     }
