@@ -414,41 +414,17 @@ function pixelToIndex(index: number) {
 }
 //-------------------Enemy-functions-----------------------
 function enemyMove() {
-  for (const enemy of enemies) {
-    if (
-      //is the enemy already on the position that he is told to be ?
-      pixelToIndex(enemy.posX) === Math.ceil(path[enemy.pathPosition + 1].positionX) &&
-      pixelToIndex(enemy.posY) === Math.ceil(path[enemy.pathPosition + 1].positionY)
-    ) {
-      enemy.pathPosition++;
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].pathPosition = Math.floor(enemies[i].walkedPixels / 64);
+    if (path[enemies[i].pathPosition + 1]) {
+      const pathDifferenceX = path[enemies[i].pathPosition + 1]?.positionX - path[enemies[i].pathPosition]?.positionX;
+      const pathDifferenceY = path[enemies[i].pathPosition + 1]?.positionY - path[enemies[i].pathPosition]?.positionY;
+      enemies[i].posY += pathDifferenceY * enemies[i].speed;
+      enemies[i].posX += pathDifferenceX * enemies[i].speed;
+      enemies[i].walkedPixels += enemies[i].speed;
     } else {
-      //NORTH---------------------------------------------------------------------
-      if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) < 0) {
-        enemy.posY -= enemy.speed;
-        enemy.walkedPixels += enemy.speed;
-      }
-      //EAST----------------------------------------------------------------------
-      if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) > 0) {
-        enemy.posX += enemy.speed;
-        enemy.walkedPixels += enemy.speed;
-      }
-      //SOUTH---------------------------------------------------------------------
-      if (path[enemy.pathPosition + 1].positionY - pixelToIndex(enemy.posY) > 0) {
-        enemy.posY += enemy.speed;
-        enemy.walkedPixels += enemy.speed;
-      }
-      //WEST----------------------------------------------------------------------
-      if (path[enemy.pathPosition + 1].positionX - pixelToIndex(enemy.posX) < 0) {
-        enemy.posX -= enemy.speed;
-        enemy.walkedPixels += enemy.speed;
-      }
-    }
-    if (pixelToIndex(enemy.posX) === path[path.length - 1].positionX && pixelToIndex(enemy.posY) === path[path.length - 1].positionY) {
-      enemy.posX = indexToPixel(path[0].positionX);
-      enemy.posY = indexToPixel(path[0].positionY);
-      enemy.pathPosition = 0;
+      enemies.splice(i, 1);
       playerDamage(1);
-      enemies.splice(0, 1);
     }
   }
 }
