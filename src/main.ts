@@ -19,9 +19,9 @@ type Enemy = {
   walkedPixels: number;
 };
 type TargetTypes = 'first' | 'mostHealth' | 'close' | 'furthest' | 'leastHealth';
-type TurretTypes = 'dispenser' | 'ironGolem';
-type Turret = {
-  type: TurretTypes;
+type TowerTypes = 'dispenser' | 'ironGolem';
+type Tower = {
+  type: TowerTypes | null;
   cost: number;
   damage: number;
   dealtDamage: number;
@@ -30,7 +30,7 @@ type Turret = {
   range: number;
   targetType: TargetTypes;
   attackSpeed: number;
-  bulletCount: number;
+  multishot: number;
   looting: number;
 };
 /** @description position as Index */
@@ -40,7 +40,7 @@ const path: {
 }[] = [];
 /** @description position as Pixel @description pathPosition as Index */
 const enemies: Enemy[] = [];
-const turrets: Turret[] = [];
+const towers: Tower[] = [];
 let interval: number;
 
 //-----------------------Game-Infos---------------------
@@ -48,7 +48,6 @@ let gameTicks = 0;
 const gameSizeX = 19;
 const gameSizeY = 11;
 let waveCount = 0;
-let functionOn = false;
 const TICKS_PER_SECOND = 24;
 const hearths20 = document.querySelector('.hearths20');
 const expFull = document.querySelector('.expFull');
@@ -62,13 +61,13 @@ const player = {
   exp: 0,
   level: 1,
 };
-const TURRET_OPTIONS = {
+const TOWER_OPTIONS = {
   dispenser: {
     cost: 50,
     damage: 1,
     range: indexToPixel(3),
     attackSpeed: 1,
-    bulletCount: 1,
+    multishot: 1,
     looting: 0,
   },
   ironGolem: {
@@ -76,7 +75,7 @@ const TURRET_OPTIONS = {
     damage: 2.5,
     range: indexToPixel(1),
     attackSpeed: 1,
-    bulletCount: 1,
+    multishot: 1,
     looting: 0,
   },
 } as const;
@@ -115,7 +114,19 @@ const ENEMY_OPTIONS = {
 };
 
 const gameMap: GameTile[][] = [];
-let selectedTurret: null | TurretTypes = null;
+const selectedTower: Tower = {
+  type: null,
+  cost: 0,
+  damage: 0,
+  dealtDamage: 0,
+  posX: 0,
+  posY: 0,
+  range: 0,
+  targetType: 'first',
+  attackSpeed: 0,
+  multishot: 0,
+  looting: 0,
+};
 //-------------------------Game---------------------------
 
 game();
@@ -144,7 +155,7 @@ function reset() {
   path.splice(0);
   gameMap.splice(0);
   enemies.splice(0);
-  turrets.splice(0);
+  towers.splice(0);
   waveCount = 0;
 }
 function gameLoop() {
@@ -188,21 +199,24 @@ function renderMap() {
     }
   }
 }
-function renderTurret() {
-  document.querySelectorAll('.turret').forEach(a => {
+function renderTower() {
+  document.querySelectorAll('.tower').forEach(a => {
     a.remove();
   });
-  for (const tower of turrets) {
-    const turretDiv = document.createElement('div');
-    turretDiv.classList.add(`turret`, tower.type);
-    turretDiv.onclick = () => {
-      functionOn = !functionOn;
-      openTowerMenu(pixelToIndex(tower.posX), pixelToIndex(tower.posY), tower);
-      renderRange(tower);
+  for (const tower of towers) {
+    const towerDiv = document.createElement('div');
+    towerDiv.className = 'tower';
+    towerDiv.onclick = () => {
+      if (selectedTower.type === null) {
+        openTowerMenu(pixelToIndex(tower.posX), pixelToIndex(tower.posY), tower);
+        renderRange(tower);
+      } else {
+        selectedTower.type = null;
+      }
     };
-    turretDiv.setAttribute('style', `top:${tower.posY}px; left:${tower.posX}px`);
+    towerDiv.setAttribute('style', `top:${tower.posY}px; left:${tower.posX}px`);
     const gameField = document.querySelector('.field');
-    gameField?.appendChild(turretDiv);
+    gameField?.appendChild(towerDiv);
   }
 }
 function renderEnemy() {
@@ -218,7 +232,7 @@ function renderEnemy() {
   }
 }
 
-function renderRange(tower: Turret) {
+function renderRange(tower: Tower) {
   if (!document.querySelector('.range')) {
     const rangeDiv = document.createElement('div');
     rangeDiv.setAttribute(
@@ -478,15 +492,6 @@ function spawnEnemy(type: EnemyTypes, delay: number) {
   return ENEMY_OPTIONS[type].strength;
 }
 //-------------------Tower-functions-----------------------
-// function turretUpgrade(selectedTurret.type) {
-//   for (const tower of turrets) {
-//     selectedTurret.attackSpeed = TURRET_OPTIONS[selectedTurret.type].attackSpeed;
-//     selectedTurret.damage;= TURRET_OPTIONS[selectedTurret.type].damage;
-//     selectedTurret.range;= TURRET_OPTIONS[selectedTurret.type].range;
-//     selectedTurret.multishot;= TURRET_OPTIONS[selectedTurret.type].multishot;
-//     selectedTurret.looting;= TURRET_OPTIONS[selectedTurret.type].looting;
-//   }
-// }
 
 function closestRange(towerX: number, towerY: number) {
   let closesEnemy = 0;
@@ -563,7 +568,7 @@ function leastHealth() {
 }
 
 function towerAttack() {
-  for (const tower of turrets) {
+  for (const tower of towers) {
     if (gameTicks % (TICKS_PER_SECOND / tower.attackSpeed) <= 1) {
       if (enemies.length) {
         let targetEnemy = -1;
@@ -598,11 +603,14 @@ function towerAttack() {
 }
 
 function sellTower(xIndex: number, yIndex: number) {
-  const turretIndex = turrets.findIndex(a => pixelToIndex(a.posX) === xIndex && pixelToIndex(a.posY) === yIndex);
+  const towerIndex = towers.findIndex(a => pixelToIndex(a.posX) === xIndex && pixelToIndex(a.posY) === yIndex);
   document.querySelector('.range')?.remove();
-  player.money += TURRET_OPTIONS[turrets[turretIndex].type].cost * 0.7;
-  turrets.splice(turretIndex, 1);
-  renderTurret();
+  const type = towers[towerIndex].type;
+  if (type !== null) {
+    player.money += TOWER_OPTIONS[type].cost * 0.7;
+    towers.splice(towerIndex, 1);
+  }
+  renderTower();
   renderShop();
 }
 
@@ -612,104 +620,102 @@ function renderShop() {
   const shopItem = document.querySelectorAll<HTMLElement>('.shopItem');
   const dispenserCost = document.querySelector('#dispenserCost') as HTMLSpanElement;
   const ironGolemCost = document.querySelector('#ironGolemCost') as HTMLSpanElement;
-  ironGolemCost.innerHTML = `${TURRET_OPTIONS.ironGolem.cost + 5 * turrets.length}`;
-  dispenserCost.innerHTML = `${TURRET_OPTIONS.dispenser.cost + 5 * turrets.length}`;
+  ironGolemCost.innerHTML = `${TOWER_OPTIONS.ironGolem.cost + 5 * towers.length}`;
+  dispenserCost.innerHTML = `${TOWER_OPTIONS.dispenser.cost + 5 * towers.length}`;
   shopItem.forEach(a => {
     a.setAttribute('style', 'background-color:#0000005d');
   });
+  if (selectedTower.type === 'dispenser') {
+    dispenser.setAttribute('style', 'background-color:red;');
+  } else if (selectedTower.type === 'ironGolem') {
+    ironGolem.setAttribute('style', 'background-color:red;');
+  }
   dispenser.onclick = () => {
-    shopItem.forEach(a => {
-      a.setAttribute('style', 'background-color:#0000005d');
-    });
-    if (selectedTurret !== 'dispenser') {
-      selectedTurret = 'dispenser';
-      dispenser.setAttribute('style', 'background-color:red;');
+    if (selectedTower.type === null) {
+      selectedTower.type = 'dispenser';
     } else {
-      selectedTurret = null;
+      selectedTower.type = null;
     }
+    renderShop();
   };
   ironGolem.onclick = () => {
-    shopItem.forEach(a => {
-      a.setAttribute('style', 'background-color:#0000005d');
-    });
-    if (selectedTurret !== 'ironGolem') {
-      selectedTurret = 'ironGolem';
-      ironGolem.setAttribute('style', 'background-color:red;');
+    if (selectedTower.type === null) {
+      selectedTower.type = 'ironGolem';
     } else {
-      selectedTurret = null;
+      selectedTower.type = null;
     }
+    renderShop();
   };
 }
 
-function openTowerMenu(x: number, y: number, tower: Turret) {
+function changeStat(stat: 'damage' | 'attackSpeed' | 'range' | 'multishot' | 'looting', tower: Tower): () => number {
+  if (stat === 'damage' || stat === 'attackSpeed') {
+    return () => (tower[stat] += 0.5);
+  }
+  if (stat === 'range') {
+    return () => (tower[stat] += 20);
+  }
+  if (stat === 'looting') {
+    return () => (tower[stat] += 1);
+  }
+  return () => tower[stat];
+}
+
+function openTowerMenu(x: number, y: number, tower: Tower) {
   const menuItem = document.querySelectorAll<HTMLElement>('.menuItem');
   menuItem.forEach(a => {
     a.setAttribute('style', 'background-color:#0000005d');
   });
-  const towerMenuObject1 = document.querySelector('#towerObject1') as HTMLElement;
-  if (functionOn) {
-    towerMenuObject1.onclick = () => {};
-    const towerMenuObject2 = document.querySelector('#towerObject2') as HTMLElement;
-    towerMenuObject2.onclick = () => {};
-    const towerMenuObject9 = document.querySelector('#towerObject9') as HTMLElement;
-    towerMenuObject9.onclick = () => {};
-    const towerMenuObject10 = document.querySelector('#towerObject10') as HTMLElement;
-    towerMenuObject10.onclick = () => {};
-    const towerMenuObject11 = document.querySelector('#towerObject11') as HTMLElement;
-    towerMenuObject11.onclick = () => {};
-    const towerMenuObject12 = document.querySelector('#towerObject12') as HTMLElement;
-    towerMenuObject12.onclick = () => {};
-    const towerMenuObject13 = document.querySelector('#towerObject13') as HTMLElement;
-    towerMenuObject13.onclick = () => {};
-    const towerMenuObject14 = document.querySelector('#towerObject14') as HTMLElement;
-    towerMenuObject14.onclick = () => {};
-    const towerMenuObject4 = document.querySelector('#towerObject4') as HTMLElement;
-    towerMenuObject4.onclick = () => {
-      tower.targetType = 'first';
-    };
-    const towerMenuObject5 = document.querySelector('#towerObject5') as HTMLElement;
-    towerMenuObject5.onclick = () => {
-      tower.targetType = 'mostHealth';
-    };
-    const towerMenuObject6 = document.querySelector('#towerObject6') as HTMLElement;
-    towerMenuObject6.onclick = () => {
-      tower.targetType = 'close';
-    };
-    const towerMenuObject7 = document.querySelector('#towerObject7') as HTMLElement;
-    towerMenuObject7.onclick = () => {
-      tower.targetType = 'furthest';
-    };
-    const towerMenuObject8 = document.querySelector('#towerObject8') as HTMLDivElement;
-    towerMenuObject8.onclick = () => {
-      tower.targetType = 'leastHealth';
-    };
-    const towerMenuObject3 = document.querySelector('#towerObject3') as HTMLElement;
-    towerMenuObject3.onclick = () => {
-      sellTower(x, y);
-    };
+  for (const stat of ['damage', 'attackSpeed', 'range', 'multishot', 'looting'] as const) {
+    (document.querySelector('#' + stat) as HTMLElement).onclick = changeStat(stat, tower);
   }
+  const towerMenuObject7 = document.querySelector('#towerObject7 ') as HTMLElement;
+  towerMenuObject7.onclick = () => {
+    tower.targetType = 'first';
+  };
+  const towerMenuObject8 = document.querySelector('#towerObject8') as HTMLElement;
+  towerMenuObject8.onclick = () => {
+    tower.targetType = 'mostHealth';
+  };
+  const towerMenuObject9 = document.querySelector('#towerObject9') as HTMLElement;
+  towerMenuObject9.onclick = () => {
+    tower.targetType = 'close';
+  };
+  const towerMenuObject10 = document.querySelector('#towerObject10') as HTMLElement;
+  towerMenuObject10.onclick = () => {
+    tower.targetType = 'furthest';
+  };
+  const towerMenuObject11 = document.querySelector('#towerObject11') as HTMLDivElement;
+  towerMenuObject11.onclick = () => {
+    tower.targetType = 'leastHealth';
+  };
+  const towerMenuObject12 = document.querySelector('#towerObject12') as HTMLElement;
+  towerMenuObject12.onclick = () => {
+    sellTower(x, y);
+  };
 }
+
 function placeTower(indexX: number, indexY: number) {
-  if (path.find(a => a.positionX === indexX && a.positionY === indexY) || selectedTurret === null) {
+  if (path.find(a => a.positionX === indexX && a.positionY === indexY) || selectedTower.type === null) {
     return;
   }
 
-  if (player.money > TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length) {
-    player.money -= TURRET_OPTIONS[selectedTurret].cost + 5 * turrets.length;
-    turrets.push({
-      ...TURRET_OPTIONS[selectedTurret],
+  if (player.money > TOWER_OPTIONS[selectedTower.type].cost + 5 * towers.length) {
+    player.money -= TOWER_OPTIONS[selectedTower.type].cost + 5 * towers.length;
+    towers.push({
+      ...TOWER_OPTIONS[selectedTower.type],
       posX: indexToPixel(indexX),
       posY: indexToPixel(indexY),
-      type: selectedTurret,
+      type: selectedTower.type,
       dealtDamage: 1,
       targetType: 'first',
       attackSpeed: 1,
-      bulletCount: 1,
+      multishot: 1,
       looting: 0,
     });
-    selectedTurret = null;
+    selectedTower.type = null;
     renderShop();
-    renderTurret();
+    renderTower();
   }
 }
 //-------------------Type-Script-Bullshit-----------------------
